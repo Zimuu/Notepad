@@ -6,3 +6,7 @@ Om man vill tar bort någon note, så popa ConfirmDialog upp, och visar: "Vill d
 Om användare väljer ja, då gör den borttagnings operationen, annars gå man tillbaka till Activity som 
 man var på innan.
 Har du något mer förslag på det?
+
+
+------------
+Jag har lagrat våra klasser i package kth/proj/notepad, ser till att får dem på rätt plats :)
