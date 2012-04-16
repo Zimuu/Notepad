@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="hello">Hello </string>
+    <string name="app_name">Notepad</string>
+    
+    <string name="editnote">Edit Note</string>
+    
+    <string name="notelist">Note List</string>
+    
+    <string name="infodialog">Information</string>
+    <string name="none"> </string>
+    <string name="err1">Note title is empty</string>
+    <string name="err2">Phone number is empty</string>
+    <string name="err3">err3</string>
+    <string name="err4">err4</string>
+    <string name="err5">err5</string>
+    <string name="close">Return</string>
+
+    <string name="confirmdialog">Confirm</string>
+    <string name="con1">Exit without saving?</string>
+    <string name="con2">Save an empty note?</string>
+    <string name="con3">Delete this note?</string>
+    <string name="con4">con3</string>
+    <string name="con5">con4</string>
+    <string name="con6">con5</string>
+    
+</resources>
