@@ -9,4 +9,8 @@ Har du något mer förslag på det?
 
 
 ------------
-Jag har lagrat våra klasser i package kth/proj/notepad, ser till att får dem på rätt plats :)
+Jag har lagrat våra klasser i package kth/proj/notepad(läste någonstans att man ska ha package namn på det sättet
+ så att den inte krocka med någon annans klass ), 
+ser till att får dem på rätt plats :)
+------------
+Jag har skrivit klart layout för EditNote Activity, de ser ut ungefär som den bild jag ritade
