@@ -1,13 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!-- General Strings -->
     <string name="hello">Hello </string>
     <string name="app_name">Notepad</string>
+    <string name="title">Title</string>
+    <string name="note">Note content: </string>
     
+    <!-- Strings for EditNote class -->
     <string name="editnote">Edit Note</string>
+    <string name="save">Save</string>
+    <string name="font">Font</string>
+    <string name="send">Send</string>
+    <string name="exit">Exit</string>
     
+    <!-- Strings for NoteList class -->
     <string name="notelist">Note List</string>
     
+    <!-- Strings for InfoDialog class -->
     <string name="infodialog">Information</string>
     <string name="none"> </string>
     <string name="err1">Note title is empty</string>
@@ -17,6 +27,7 @@
     <string name="err5">err5</string>
     <string name="close">Return</string>
 
+    <!-- Strings for ConfirmDialog class -->
     <string name="confirmdialog">Confirm</string>
     <string name="con1">Exit without saving?</string>
     <string name="con2">Save an empty note?</string>
