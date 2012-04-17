@@ -65,5 +65,9 @@
  	    <item>Italic</item>
  	    <item>Bold</item>
  	</string-array>
+ 	
+ 	<!-- Strings for AlarmDialog -->
+ 	<string name="date">Set date</string>
+ 	<string name="time">Set time</string>
     
 </resources>

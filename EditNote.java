@@ -1,5 +1,6 @@
 package kth.proj.notepad;
 
+import java.util.Calendar;
 import java.util.zip.Inflater;
 
 import android.app.Activity;
@@ -19,12 +20,14 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 @SuppressWarnings("unused")
@@ -47,6 +50,9 @@ public class EditNote extends Activity {
 	private Builder infoBuilder;
 	private AlertDialog confirm;
 	private Builder confirmBuilder;
+	
+	private AlertDialog alarm;
+	private Calendar calendar;
 	
 	private AlertDialog font;
 	private TextView size;
@@ -75,7 +81,54 @@ public class EditNote extends Activity {
 			.setTitle(R.string.confirmdialog)
 			.setNegativeButton(R.string.close, new CloseOperation());
 
+        createAlarmDialog();
         createFontDialog();
+    }
+    
+    private void createAlarmDialog() {
+        LayoutInflater inflator = getLayoutInflater();
+        View layout = inflator.inflate(R.layout.alarmdialog, (ViewGroup) findViewById(R.id.alarmlayout));
+
+        DatePicker datepicker = (DatePicker) layout.findViewById(R.id.datepicker);
+        TimePicker timepicker = (TimePicker) layout.findViewById(R.id.timepicker);
+        calendar = Calendar.getInstance();
+        
+        datepicker.init(calendar.get(Calendar.YEAR)
+        		, calendar.get(Calendar.MONTH)
+        		, calendar.get(Calendar.DAY_OF_MONTH)
+        		, new DatePicker.OnDateChangedListener() {
+        	@Override
+            public void onDateChanged(DatePicker view, int year, int monthOfYear,
+            		int dayOfMonth) {
+            	calendar.set(year, monthOfYear, dayOfMonth);
+            }
+        });
+        
+        timepicker.setIs24HourView(true);
+        timepicker.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener() {
+            
+        	@Override
+        	public void onTimeChanged(TimePicker view, int hourOfDay, int minute) {
+        		calendar.set(calendar.get(Calendar.YEAR)
+                		, calendar.get(Calendar.MONTH)
+                		, calendar.get(Calendar.DAY_OF_MONTH),
+                		hourOfDay, minute);
+        	}
+        });
+        
+        alarm = new AlertDialog.Builder(this)
+        	.setView(layout)
+        	.setTitle(R.string.alarm)
+        	.setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					// TODO Auto-generated method stub
+					
+				}
+			})
+        	.setNegativeButton(R.string.close, new CloseOperation())
+        	.create();
     }
     
     private void createFontDialog() {
@@ -238,8 +291,9 @@ public class EditNote extends Activity {
 		font.show();
 	}
 	
-	//TODO
-	private void alarm() {}
+	private void alarm() {
+		alarm.show();
+	}
 	
 	//TODO
 	private void delete() {
