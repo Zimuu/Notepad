@@ -17,3 +17,5 @@ Jag har skrivit klart layout för EditNote Activity, de ser ut ungefär som den 
 ------------
 La till en ytterligare klass som hantera sms, det måste finnas något dialog klass implementerade i api,
 om du vet om det säg gärna till, så vi slipper de här 3 dialog klasserna
+------------
+Tagit bort de 3 dialog klaserna och använder nu Androids inbyggda dialog istället
