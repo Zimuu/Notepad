@@ -18,4 +18,7 @@ I font() dialogen hade jag radiobuttons, men den fungerade inte som den skulle.
 Jag la in alla RadioButtons i en RadioGroup, och kunde på något sätt välja alla buttons
 (den skulle ju vara single-selection), om du vet svaret säg gärna till mig, eftersom
 radiobuttons ser ganska bra ut där i dialogen. Jag använder Spinner nu istället för RadioGroup
-------------
+-----------
+Fixade alarm fönster för tidsval, om du vill göra alarm funktionen kan du använda den nu,
+jag tror det är bara skriva kod i //TODO kommentaren i onClick metoden.
+Den object som spara tid och datum för alarm är private Calendar calendar.
