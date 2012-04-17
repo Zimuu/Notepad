@@ -10,10 +10,12 @@ Har du något mer förslag på det?
 
 ------------
 Jag har lagrat våra klasser i package kth/proj/notepad(läste någonstans att man ska ha package namn på det sättet
- så att den inte krocka med någon annans klass ), 
-ser till att får dem på rätt plats :)
+ så att den inte krocka med någon annans klass ) 
+R filer i samma package fast under gen-mappen
 ------------
 Jag har skrivit klart layout för EditNote Activity, de ser ut ungefär som den bild jag ritade
 ------------
-La till en ytterligare klass som hantera sms, det måste finnas något dialog klass implementerade i api,
-om du vet om det säg gärna till, så vi slipper de här 3 dialog klasserna
+Tagit bort de 3 dialog klaserna och använder nu Androids inbyggda dialog istället
+------------
+Note klass hantera information för själva note
+Notes klass spara alla noter i en set, klassen hantera också inläsning av xml-filen och skrivning av xml-filen
