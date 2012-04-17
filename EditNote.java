@@ -1,8 +1,13 @@
 package kth.proj.notepad;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
@@ -16,6 +21,12 @@ public class EditNote extends Activity {
 	
 	private EditText note;
 	private EditText title;
+	private AlertDialog info;
+	private Builder infoBuilder;
+	private AlertDialog confirm;
+	private Builder confirmBuilder;
+	
+	private boolean saved;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -23,6 +34,13 @@ public class EditNote extends Activity {
         setContentView(R.layout.editnote);
         note = (EditText) findViewById(R.id.noteField);
         title = (EditText) findViewById(R.id.titleField);
+        
+        infoBuilder = new AlertDialog.Builder(this)
+			.setTitle(R.string.infodialog)
+			.setPositiveButton(R.string.confirm, new CloseOperation());
+        confirmBuilder =  new AlertDialog.Builder(this)
+			.setTitle(R.string.confirmdialog)
+			.setNegativeButton(R.string.close, new CloseOperation());
     }
 
 	@Override
@@ -55,41 +73,82 @@ public class EditNote extends Activity {
 	private void save() {
 		String titleString = title.getText().toString();
 		if (titleString.trim().length() == 0) {
-			Intent i = new Intent();
-			i.putExtra("info", R.string.err1);
-			i.setClass(this, InfoDialog.class);
-			this.startActivity(i);
+			info = infoBuilder.setMessage(R.string.err1).create();
+			info.show();
 			return;
 		}
-		String noteString = checkEmptyNote();
+		String noteString = checkNote();
 		if (noteString == null) return;
 		
+		saved = true;
 	}
 	
 	private void send() {
-		String string = checkEmptyNote();
+		final String string = checkNote();
 		if (string == null) return;
 		
-		Intent i = new Intent();
-		i.setClass(EditNote.this, MessageDialog.class);
-		i.putExtra("note", string);
-		this.startActivity(i);
+		final EditText phone = new EditText(this);
+		
+		new AlertDialog.Builder(this)
+				.setTitle(R.string.sms)
+				.setMessage(R.string.phone)
+				.setView(phone)
+				.setPositiveButton(R.string.send, new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						String phoneNumber = phone.getText().toString();
+						Uri uri = Uri.parse("smsto:" + phoneNumber);
+						Intent i = new Intent(Intent.ACTION_SENDTO, uri);
+						i.putExtra("sms_body", string);
+						EditNote.this.startActivity(i);
+					}
+				})
+				.setNegativeButton(R.string.close, new CloseOperation())
+				.create().show();
 	}
 	
-	private String checkEmptyNote() {
+	private String checkNote() {
 		String string = note.getText().toString();
 		if (string.trim().length() != 0)
-			return string;
+			return string;  
 		
-		Intent i = new Intent();
-		i.setClass(this, InfoDialog.class);
-		i.putExtra("info", R.string.err3);
-		this.startActivity(i);
+		info = infoBuilder.setMessage(R.string.err3).create();
+		info.show();
 		return null;
 	}
 	
-	private void exit() {}
+	private void exit() {
+		confirmBuilder
+				.setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						finish();
+					}
+				
+				});
+		if (saved)
+			confirm = confirmBuilder.setMessage(R.string.con1).create();
+		else
+			confirm = confirmBuilder.setMessage(R.string.con4).create();
+		confirm.show();
+	}
 	
 	private void font() {}
 
+	/**
+	 * Change status of note to unsaved when user presses any key
+	 */
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		saved = false;
+		return super.onKeyDown(keyCode, event);
+	}
+	
+	private class CloseOperation implements DialogInterface.OnClickListener {
+
+		@Override
+		public void onClick(DialogInterface dialog, int which) {
+			dialog.dismiss();
+		}
+	}
 }

@@ -10,8 +10,8 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name" >
         <activity
-            android:name=".NoteList"
-            android:label="@string/app_name" >
+            android:name=".EditNote"
+            android:label="@string/editnote" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -22,18 +22,6 @@
         <activity
             android:name=".EditNote"
             android:label="@string/editnote" >
-        </activity>
-        
-        <activity
-            android:name=".InfoDialog"
-            android:label="@string/infodialog" 
-            android:theme="@android:style/Theme.Dialog">
-        </activity>
-        
-        <activity
-            android:name=".ConfirmDialog"
-            android:label="@string/confirmdialog" 
-            android:theme="@android:style/Theme.Dialog">
         </activity>
     </application>
 

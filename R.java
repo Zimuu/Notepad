@@ -14,34 +14,56 @@ public final class R {
         public static final int ic_launcher=0x7f020000;
     }
     public static final class id {
-        public static final int close=0x7f050001;
-        public static final int info=0x7f050000;
+        public static final int btm=0x7f050002;
+        public static final int noteField=0x7f050003;
+        public static final int titleField=0x7f050001;
+        public static final int top=0x7f050000;
     }
     public static final class layout {
-        public static final int confirmdialog=0x7f030000;
-        public static final int editnote=0x7f030001;
-        public static final int infodialog=0x7f030002;
-        public static final int notelist=0x7f030003;
+        public static final int editnote=0x7f030000;
+        public static final int notelist=0x7f030001;
     }
     public static final class string {
         public static final int app_name=0x7f040001;
-        public static final int close=0x7f04000b;
-        public static final int con1=0x7f04000d;
-        public static final int con2=0x7f04000e;
-        public static final int con3=0x7f04000f;
-        public static final int con4=0x7f040010;
-        public static final int con5=0x7f040011;
-        public static final int con6=0x7f040012;
-        public static final int confirmdialog=0x7f04000c;
-        public static final int editnote=0x7f040002;
-        public static final int err1=0x7f040006;
-        public static final int err2=0x7f040007;
-        public static final int err3=0x7f040008;
-        public static final int err4=0x7f040009;
-        public static final int err5=0x7f04000a;
+        public static final int close=0x7f040004;
+        public static final int con1=0x7f040015;
+        public static final int con2=0x7f040016;
+        public static final int con3=0x7f040017;
+        public static final int con4=0x7f040018;
+        public static final int con5=0x7f040019;
+        public static final int con6=0x7f04001a;
+        public static final int confirm=0x7f040005;
+        public static final int confirmdialog=0x7f040014;
+        /**  Strings for EditNote class 
+         */
+        public static final int editnote=0x7f040006;
+        public static final int err1=0x7f04000e;
+        public static final int err2=0x7f04000f;
+        public static final int err3=0x7f040010;
+        public static final int err4=0x7f040011;
+        public static final int err5=0x7f040012;
+        public static final int exit=0x7f04000a;
+        public static final int font=0x7f040008;
+        /**  General Strings 
+         */
         public static final int hello=0x7f040000;
-        public static final int infodialog=0x7f040004;
-        public static final int none=0x7f040005;
-        public static final int notelist=0x7f040003;
+        /**  Strings for InfoDialog 
+         */
+        public static final int infodialog=0x7f04000c;
+        public static final int none=0x7f04000d;
+        public static final int note=0x7f040003;
+        /**  Strings for NoteList class 
+         */
+        public static final int notelist=0x7f04000b;
+        /**  Strings for ConfirmDialog 
+         */
+        public static final int phone=0x7f040013;
+        public static final int save=0x7f040007;
+        public static final int send=0x7f040009;
+        /**  Strings for MessageDialog 
+         */
+        public static final int sms=0x7f04001b;
+        public static final int title=0x7f040002;
+        public static final int to=0x7f04001c;
     }
 }
