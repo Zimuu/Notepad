@@ -19,6 +19,8 @@ public class EditNote extends Activity {
 	public static final int SEND = 1;
 	public static final int EXIT = 2;
 	public static final int FONT = 3;
+	public static final int ALARM = 4;
+	public static final int DELETE = 5;
 	
 	private EditText note;
 	private EditText title;
@@ -28,7 +30,6 @@ public class EditNote extends Activity {
 	private Builder confirmBuilder;
 	
 	private boolean saved;
-	@SuppressWarnings("unused")
 	private Note currentNote;
 	
     @Override
@@ -56,6 +57,8 @@ public class EditNote extends Activity {
 		menu.add(0, SEND, 0, R.string.send);
 		menu.add(0, EXIT, 0, R.string.exit);
 		menu.add(0, FONT, 0, R.string.font);
+		menu.add(0, ALARM, 0, R.string.alarm);
+		menu.add(0, DELETE, 0, R.string.delete);
 		return super.onCreateOptionsMenu(menu);
 	}
 	
@@ -73,6 +76,12 @@ public class EditNote extends Activity {
 				break;	
 			case FONT:
 				font();
+				break;
+			case ALARM:
+				alarm();
+				break;
+			case DELETE:
+				delete();
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -142,6 +151,13 @@ public class EditNote extends Activity {
 	}
 	
 	private void font() {}
+	
+	private void alarm() {}
+	
+	private void delete() {
+		Notes.getNotes().remove(currentNote);
+		finish();
+	}
 
 	/**
 	 * Change status of note to unsaved when user presses any key

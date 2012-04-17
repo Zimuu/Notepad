@@ -9,12 +9,18 @@
     <string name="close">Return</string>
     <string name="confirm">Confirm</string>
     
+    <!-- Strings for NoteList class -->
+    
     <!-- Strings for EditNote class -->
     <string name="editnote">Edit Note</string>
     <string name="save">Save</string>
     <string name="font">Font</string>
     <string name="send">Send</string>
     <string name="exit">Exit</string>
+    <string name="saved">Note saved</string>
+    <string name="sent">SMS sent</string>
+    <string name="alarm">Alarm</string>
+    <string name="delete">Delete</string>
     
     <!-- Strings for NoteList class -->
     <string name="notelist">Note List</string>
