@@ -27,6 +27,8 @@ public class EditNote extends Activity {
 	private Builder confirmBuilder;
 	
 	private boolean saved;
+	@SuppressWarnings("unused")
+	private Note currentNote;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -34,6 +36,10 @@ public class EditNote extends Activity {
         setContentView(R.layout.editnote);
         note = (EditText) findViewById(R.id.noteField);
         title = (EditText) findViewById(R.id.titleField);
+        
+        //currentNote = Notes.getNote(getIntent().getIntExtra("noteid", 0));
+        //note.setText(currentNote.getContent());
+        //title.setText(currentNote.getTitle());
         
         infoBuilder = new AlertDialog.Builder(this)
 			.setTitle(R.string.infodialog)
