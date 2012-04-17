@@ -1,15 +1,13 @@
 package kth.proj.notepad;
 
-import java.sql.Date;
-
 public final class Note implements Comparable<Note>{
 
 	private static int id = 0;
 	private String title;
-	private Date date;
+	private long date;
 	private String content;
 	
-	public Note(String title, Date date, String content) {
+	public Note(String title, long date, String content) {
 		id++;
 		this.title = title;
 		this.date = date;
@@ -22,7 +20,7 @@ public final class Note implements Comparable<Note>{
 				o.title == this.title &&
 				o.content == this.content)
 			return 0;
-		return o.date.compareTo(this.date);
+		return o.date > this.date ? 1 : -1;
 	}
 	
 	@Override
@@ -34,7 +32,7 @@ public final class Note implements Comparable<Note>{
 	public boolean equals(Object obj) {
 		Note o = (Note) obj;
 		return (o.title.equals(this.title) && 
-				this.date.equals(this.date) && 
+				o.date == this.date && 
 				this.content.equals(this.content));
 	}
 
@@ -46,12 +44,12 @@ public final class Note implements Comparable<Note>{
 		this.title = title;
 	}
 	
-	public void setDate(Date date) {
+	public void setDate(long date) {
 		this.date = date;
 	}
 
-	public String getDate() {
-		return date.toString();
+	public long getDate() {
+		return date;
 	}
 
 	public String getContent() {

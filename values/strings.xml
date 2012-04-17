@@ -21,6 +21,7 @@
     <string name="sent">SMS sent</string>
     <string name="alarm">Alarm</string>
     <string name="delete">Delete</string>
+    <string name="deleted">Note deleted</string>
     
     <!-- Strings for NoteList class -->
     <string name="notelist">Note List</string>
@@ -47,5 +48,22 @@
     <!-- Strings for MessageDialog -->
     <string name="sms">SMS</string>
     <string name="to">To: </string>
+    
+    <!-- Strings for FontDialog -->
+    <string name="color">Color</string>
+    <string-array name="colors">
+	    <item>Black</item>
+	    <item>Red</item>
+	    <item>Blue</item>
+	    <item>Yellow</item>
+	    <item>Green</item>
+    </string-array>
+    <string name="size">Size</string>
+ 	<string name="fontstyle">Style</string>
+ 	<string-array name="styles">
+ 	    <item>Normal</item>
+ 	    <item>Italic</item>
+ 	    <item>Bold</item>
+ 	</string-array>
     
 </resources>
