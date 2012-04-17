@@ -2,13 +2,22 @@ package kth.proj.notepad;
 
 public final class Note implements Comparable<Note>{
 
-	private static int id = 0;
+	private static int  ID = 0;
 	private String title;
 	private long date;
 	private String content;
+	private int id;
+	
+	{
+		ID++;
+		id = ID;
+	}
+	
+	public Note() {}
 	
 	public Note(String title, long date, String content) {
-		id++;
+		ID++;
+		this.id = ID;
 		this.title = title;
 		this.date = date;
 		this.content = content;
@@ -20,7 +29,7 @@ public final class Note implements Comparable<Note>{
 				o.title == this.title &&
 				o.content == this.content)
 			return 0;
-		return o.date > this.date ? 1 : -1;
+		return o.date > this.date ? -1 : 1;
 	}
 	
 	@Override
@@ -34,6 +43,11 @@ public final class Note implements Comparable<Note>{
 		return (o.title.equals(this.title) && 
 				o.date == this.date && 
 				this.content.equals(this.content));
+	}
+	
+	@Override
+	public String toString() {
+		return "\r\n[" + id + "]\r\ntitle: " + title + "\r\ndate: " + date + "\r\ncontent: " + content + "\r\n";
 	}
 
 	public String getTitle() {

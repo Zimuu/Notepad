@@ -1,61 +1,67 @@
 package kth.proj.notepad;
 
-import java.io.File;
-import java.util.HashSet;
+import java.io.InputStream;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.xmlpull.v1.XmlPullParser;
+
+import android.util.Xml;
 
 
 public class Notes {
 
-	private static final File FILE = new File("src\\kth\\proj\\notepad\\Database.xml");
-	private static final Set<Note> NOTES = new HashSet<Note>();
+	private static Set<Note> notes;
 	
 	public static Note getNote(int id) {
-		for (Note note : NOTES) {
+		for (Note note : notes) {
 			if (note.getId() == id)
 				return note;
 		}
 		return null;
 	}
 	
-	public static void readXML() {
-		try {
-			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder builder = factory.newDocumentBuilder();
-			Document doc = builder.parse(FILE);
-			doc.getDocumentElement().normalize();
-			
-			NodeList list = doc.getElementsByTagName("Notes");
-			
-			for (int i = 0; i < list.getLength(); i++) {
-				Node node = list.item(i);
-				if (node.getNodeType() == Node.ELEMENT_NODE) {
-					Element element = (Element) node;
-					NOTES.add(new Note(
-							getTagValue("title", element)
-							, Long.parseLong(getTagValue("date", element))
-							, getTagValue("content", element)));
-				}
-			}
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	public static void readXML(InputStream in) throws Exception{
+		Note note = null;
+		XmlPullParser parser = Xml.newPullParser();  
 		
-	}
+		parser.setInput(in, "UTF-8");  
+		int eventCode = parser.getEventType();  
+		while (XmlPullParser.END_DOCUMENT != eventCode ) {  
+			switch (eventCode) {  
+				case XmlPullParser.START_DOCUMENT:
+					notes = new TreeSet<Note>();  
+					break;  
+				case XmlPullParser.START_TAG:
+					String name = parser.getName();
+					if ("note".equals(name))  
+						note = new Note();  
+					if (note != null) {  
+						if ("title".equals(name)) 
+							note.setTitle(parser.nextText());  
+						else if ("date".equals(name)) 
+							note.setDate(new Long(parser.nextText())); 
+						else if ("content".equals(name))
+							note.setContent(parser.nextText());
+					}  
+					break;  
+				case XmlPullParser.END_TAG:
+					if("note".equals(parser.getName()) && notes != null){  
+						notes.add(note);  
+						note = null;  
+					}
+					break;  
+			} 
+			eventCode = parser.next();  
+		}
+		System.out.println(notes);
+	}  
 	
 	public static void writeXML() {
 		try {
@@ -66,8 +72,7 @@ public class Notes {
 			Element rootElement = doc.createElement("Notes");
 			doc.appendChild(rootElement);
 			
-			int i = 0;
-			for (Note note : NOTES) {
+			for (Note note : notes) {
 				Element resultTag = doc.createElement("Note");
 				rootElement.appendChild(resultTag);
 
@@ -83,34 +88,25 @@ public class Notes {
 				contentTag.appendChild(doc.createTextNode(
 						note.getContent()));
 				resultTag.appendChild(contentTag);
-				
-				i++;
-				if (i == 10) break;
 			}
-			TransformerFactory tFactory = TransformerFactory.newInstance();
-			Transformer transformer = tFactory.newTransformer();
-			DOMSource source = new DOMSource(doc);
-			StreamResult stream = new StreamResult(FILE);
+			//TransformerFactory tFactory = TransformerFactory.newInstance();
+			//Transformer transformer = tFactory.newTransformer();
+			//DOMSource source = new DOMSource(doc);
+			//StreamResult stream = new StreamResult(FILE);
 			
-			transformer.transform(source, stream);
+			//transformer.transform(source, stream);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}		
 	}
-
-	private static String getTagValue(String tag, Element element) {
-		NodeList list = element.getElementsByTagName(tag).item(0).getChildNodes();
-		Node value = (Node)list.item(0);
-		return value.getNodeValue();
-	}
 	
 	public static Set<Note> getNotes() {
-		return NOTES;
+		return notes;
 	}
 	
 	public static void save(Note note) {
-		Iterator<Note> it = NOTES.iterator();
+		Iterator<Note> it = notes.iterator();
 		while (it.hasNext()) {
 			Note n = it.next();
 			if (n.getId() == note.getId()) {
@@ -118,13 +114,15 @@ public class Notes {
 				return;
 			}
 		}
-		NOTES.add(note);
+		notes.add(note);
 	}
-	
+
 	public static void delete(int id) {
-		for (Note note : NOTES) {
-			if (note.getId() == id)
-				NOTES.remove(note);
+		Iterator<Note> it = notes.iterator();
+		while (it.hasNext()) {
+			Note note = it.next();
+			if (note.getId() == id) 
+				it.remove();
 		}
 	}
 }

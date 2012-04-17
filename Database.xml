@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Notes>
-    <Note>
+<notes>
+    <note>
         <title>Shopping</title>
+        <date>1334675582203</date>
         <content>Beef, Milk, Bread</content>
-        <date>1334675582203</date>
-    </Note>
-    <Note>
+    </note>
+    <note>
         <title>Project</title>
-        <content>Modification</content>
         <date>1334675582203</date>
-    </Note>
-</Notes>
+        <content>Modification</content>
+    </note>
+</notes>

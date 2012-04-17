@@ -1,6 +1,9 @@
 package kth.proj.notepad;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Calendar;
+import java.util.Set;
 import java.util.zip.Inflater;
 
 import android.app.Activity;
@@ -8,6 +11,7 @@ import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.AssetManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -69,11 +73,17 @@ public class EditNote extends Activity {
         setContentView(R.layout.editnote);
         note = (EditText) findViewById(R.id.noteField);
         title = (EditText) findViewById(R.id.titleField);
+
+		InputStream in = null;
+		try {
+			in = getAssets().open("database.xml");  
+			Notes.readXML(in);
+		} catch (Exception e) {} finally { try { in.close(); } catch (IOException e) {} }
         
-        //currentNote = Notes.getNote(/*getIntent().getIntExtra("noteid", 0)*/2);
-        //note.setText(currentNote.getContent());
-        //title.setText(currentNote.getTitle());
-        
+		currentNote = Notes.getNote(1);
+		note.setText(currentNote.getContent());
+		title.setText(currentNote.getTitle());
+		
         infoBuilder = new AlertDialog.Builder(this)
 			.setTitle(R.string.infodialog)
 			.setPositiveButton(R.string.confirm, new CloseOperation());
