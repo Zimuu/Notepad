@@ -16,3 +16,6 @@ R filer i samma package fast under gen-mappen
 Jag har skrivit klart layout för EditNote Activity, de ser ut ungefär som den bild jag ritade
 ------------
 Tagit bort de 3 dialog klaserna och använder nu Androids inbyggda dialog istället
+------------
+Note klass hantera information för själva note
+Notes klass spara alla noter i en set, klassen hantera också inläsning av xml-filen och skrivning av xml-filen
