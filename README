@@ -9,3 +9,13 @@ Tagit bort de 3 dialog klaserna och använder nu Androids inbyggda dialog istäl
 ------------
 Note klass hantera information för själva note
 Notes klass spara alla noter i en set, klassen hantera också inläsning av xml-filen och skrivning av xml-filen
+------------
+Jag har skrivit klart Notes.java, har inte orka testa än, men den borde fungera nu.
+Som du ser är alla metoder statiska i klassen. 
+När du skicka id till mig, sätt den i namnet "noteid", så jag kan fånga den rätt.
+
+I font() dialogen hade jag radiobuttons, men den fungerade inte som den skulle.
+Jag la in alla RadioButtons i en RadioGroup, och kunde på något sätt välja alla buttons
+(den skulle ju vara single-selection), om du vet svaret säg gärna till mig, eftersom
+radiobuttons ser ganska bra ut där i dialogen. Jag använder Spinner nu istället för RadioGroup
+------------

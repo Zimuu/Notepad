@@ -18,6 +18,7 @@ public final class R {
         public static final int icon=0x7f020000;
     }
     public static final class id {
+<<<<<<< HEAD
         public static final int alarmlayout=0x7f060000;
         public static final int btm=0x7f060005;
         public static final int colorspinner=0x7f060009;
@@ -38,6 +39,24 @@ public final class R {
         public static final int editnote=0x7f030001;
         public static final int fontdialog=0x7f030002;
         public static final int notelist=0x7f030003;
+=======
+        public static final int btm=0x7f060002;
+        public static final int colorspinner=0x7f060006;
+        public static final int colour=0x7f060005;
+        public static final int fontlayout=0x7f060004;
+        public static final int fontspinner=0x7f060008;
+        public static final int noteField=0x7f060003;
+        public static final int size=0x7f060009;
+        public static final int sizeField=0x7f06000a;
+        public static final int style=0x7f060007;
+        public static final int titleField=0x7f060001;
+        public static final int top=0x7f060000;
+    }
+    public static final class layout {
+        public static final int editnote=0x7f030000;
+        public static final int fontdialog=0x7f030001;
+        public static final int notelist=0x7f030002;
+>>>>>>> a52176420f38afd4e47044a2dcafd84514af1077
     }
     public static final class string {
         public static final int alarm=0x7f04000d;
@@ -54,9 +73,12 @@ public final class R {
         public static final int con6=0x7f04001f;
         public static final int confirm=0x7f040005;
         public static final int confirmdialog=0x7f040019;
+<<<<<<< HEAD
         /**  Strings for AlarmDialog 
          */
         public static final int date=0x7f040025;
+=======
+>>>>>>> a52176420f38afd4e47044a2dcafd84514af1077
         public static final int delete=0x7f04000e;
         public static final int deleted=0x7f04000f;
         /**  Strings for NoteList class 
@@ -93,7 +115,10 @@ public final class R {
         /**  Strings for MessageDialog 
          */
         public static final int sms=0x7f040020;
+<<<<<<< HEAD
         public static final int time=0x7f040026;
+=======
+>>>>>>> a52176420f38afd4e47044a2dcafd84514af1077
         public static final int title=0x7f040002;
         public static final int to=0x7f040021;
     }
