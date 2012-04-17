@@ -1,13 +1,3 @@
-Jag har skrivit 4 klasser nu. Notelist och EditNote är de viktigast Activity som vi ska jobba med,
-och där jobbar man med notar och sånt.
-InfoDialog och ConfirmDialog är till för varningar och dialogen mellan program och användare
-t.ex. om man inte har skrivit något på titel så popa infodialog upp och visar "du har inte skrivit titel"
-Om man vill tar bort någon note, så popa ConfirmDialog upp, och visar: "Vill du verkligen tar bort den här?"
-Om användare väljer ja, då gör den borttagnings operationen, annars gå man tillbaka till Activity som 
-man var på innan.
-Har du något mer förslag på det?
-
-
 ------------
 Jag har lagrat våra klasser i package kth/proj/notepad(läste någonstans att man ska ha package namn på det sättet
  så att den inte krocka med någon annans klass ) 
