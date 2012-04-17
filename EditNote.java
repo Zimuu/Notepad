@@ -11,6 +11,7 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
+import android.widget.Toast;
 
 public class EditNote extends Activity {
 	
@@ -87,6 +88,7 @@ public class EditNote extends Activity {
 		if (noteString == null) return;
 		
 		saved = true;
+		Toast.makeText(EditNote.this, R.string.saved, Toast.LENGTH_SHORT).show();
 	}
 	
 	private void send() {
@@ -110,7 +112,7 @@ public class EditNote extends Activity {
 					}
 				})
 				.setNegativeButton(R.string.close, new CloseOperation())
-				.create().show();
+				.create().show();	
 	}
 	
 	private String checkNote() {

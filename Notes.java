@@ -12,6 +12,7 @@ public class Notes {
 			if (note.getId() == id)
 				return note;
 		}
+		//unreachable if program is correctly designed
 		return null;
 	}
 	
