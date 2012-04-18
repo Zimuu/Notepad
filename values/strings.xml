@@ -22,6 +22,8 @@
     <string name="alarm">Alarm</string>
     <string name="delete">Delete</string>
     <string name="deleted">Note deleted</string>
+    <string name="alarmon">Alarm On</string>
+    <string name="alarmoff">Alarm Off</string>
     
     <!-- Strings for NoteList class -->
     <string name="notelist">Note List</string>
@@ -42,7 +44,7 @@
     <string name="con2">Save an empty note?</string>
     <string name="con3">Delete this note?</string>
     <string name="con4">Exit program?</string>
-    <string name="con5">con4</string>
+    <string name="con5">Cancle alarm?</string>
     <string name="con6">con5</string>
     
     <!-- Strings for MessageDialog -->

@@ -46,8 +46,9 @@ public class EditNote extends Activity {
 	public static final int SEND = 1;
 	public static final int EXIT = 2;
 	public static final int FONT = 3;
-	public static final int ALARM = 4;
+	public static final int ALARMON = 4;
 	public static final int DELETE = 5;
+	public static final int ALARMOFF = 6;
 
 	public static final int DEFAULT_COLOR = Color.BLACK;
 	public static final int DEFAULT_STYLE = 0;
@@ -69,6 +70,7 @@ public class EditNote extends Activity {
 	private int color;
 	private int textSize;
 	
+	private boolean alarmed;
 	private boolean saved;
 	private Note currentNote;
 	
@@ -83,12 +85,14 @@ public class EditNote extends Activity {
 		try {
 			in = this.openFileInput("database.xml");
 			Notes.readXML(in);
-		} catch (Exception e) { e.printStackTrace(); } finally { try { in.close(); } catch (Exception e) {} }
-        
+		} catch (Exception e) { e.printStackTrace(); }
+        /*
 		currentNote = Notes.getNote(2);
+		if (currentNote.getAlarm() == -1);
+		else calendar.setTimeInMillis(currentNote.getAlarm());
 		note.setText(currentNote.getContent());
 		title.setText(currentNote.getTitle());
-		
+		*/
         infoBuilder = new AlertDialog.Builder(this)
 			.setTitle(R.string.infodialog)
 			.setPositiveButton(R.string.confirm, new CloseOperation());
@@ -139,7 +143,7 @@ public class EditNote extends Activity {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					// TODO Auto-generated method stub
-					
+					alarmed = true;					
 				}
 			})
         	.setNegativeButton(R.string.close, new CloseOperation())
@@ -204,8 +208,9 @@ public class EditNote extends Activity {
 		menu.add(0, SEND, 0, R.string.send);
 		menu.add(0, EXIT, 0, R.string.exit);
 		menu.add(0, FONT, 0, R.string.font);
-		menu.add(0, ALARM, 0, R.string.alarm);
+		menu.add(0, ALARMON, 0, R.string.alarmon);
 		menu.add(0, DELETE, 0, R.string.delete);
+		menu.add(0, ALARMOFF, 0, R.string.alarmoff);
 		return super.onCreateOptionsMenu(menu);
 	}
 	
@@ -224,11 +229,14 @@ public class EditNote extends Activity {
 			case FONT:
 				font();
 				break;
-			case ALARM:
-				alarm();
+			case ALARMON:
+				alarmOn();
 				break;
 			case DELETE:
 				delete();
+				break;
+			case ALARMOFF:
+				alarmOff();
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -247,6 +255,8 @@ public class EditNote extends Activity {
 		currentNote.setTitle(title.getText().toString());
 		currentNote.setContent(noteString);
 		currentNote.setDate(System.currentTimeMillis());
+		if (alarmed) currentNote.setAlarm(calendar.getTimeInMillis());
+		else currentNote.setAlarm(-1);
 		saved = true;
 		Notes.save(currentNote);
 		Toast.makeText(EditNote.this, R.string.saved, Toast.LENGTH_SHORT).show();
@@ -291,7 +301,6 @@ public class EditNote extends Activity {
 				.setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						//TODO
 						finish();
 					}
 				
@@ -307,11 +316,23 @@ public class EditNote extends Activity {
 		font.show();
 	}
 	
-	private void alarm() {
+	private void alarmOn() {
 		alarm.show();
 	}
 	
-	//TODO
+	private void alarmOff() {
+		confirmBuilder
+				.setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						alarmed = false;
+					}
+				
+				})
+				.setMessage(R.string.con5).create();
+		confirm.show();
+	}
+	
 	private void delete() {
 		Notes.delete(currentNote.getId());
 		Toast.makeText(this, R.string.deleted, Toast.LENGTH_SHORT).show();
@@ -324,7 +345,7 @@ public class EditNote extends Activity {
 			FileOutputStream outStream = this.openFileOutput("database.xml", Context.MODE_WORLD_WRITEABLE);
 			OutputStreamWriter writer = new OutputStreamWriter(outStream, "UTF-8");
 			Notes.writeXML(writer);
-		} catch (Exception e) {}
+		} catch (Exception e) { e.printStackTrace(); }
 		super.onDestroy();
 	}
 

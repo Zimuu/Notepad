@@ -5,6 +5,7 @@ public final class Note implements Comparable<Note>{
 	private static int  ID = 0;
 	private String title;
 	private long date;
+	private long alarm;
 	private String content;
 	private int id;
 	
@@ -15,11 +16,12 @@ public final class Note implements Comparable<Note>{
 	
 	public Note() {}
 	
-	public Note(String title, long date, String content) {
+	public Note(String title, long date, long alarm, String content) {
 		ID++;
 		this.id = ID;
 		this.title = title;
 		this.date = date;
+		this.alarm = alarm;
 		this.content = content;
 	}
 
@@ -64,6 +66,14 @@ public final class Note implements Comparable<Note>{
 
 	public long getDate() {
 		return date;
+	}
+	
+	public void setAlarm(long alarm) {
+		this.alarm = alarm;
+	}
+	
+	public long getAlarm() {
+		return alarm;
 	}
 
 	public String getContent() {

@@ -24,39 +24,42 @@ public class Notes {
 		return null;
 	}
 	
-	public static void readXML(InputStream in) throws Exception{
+	public static void readXML(InputStream in){
 		Note note = null;
-		
-		XmlPullParser parser = Xml.newPullParser();
-		parser.setInput(in, "UTF-8");
-		int eventCode = parser.getEventType();  
-		while (XmlPullParser.END_DOCUMENT != eventCode ) {  
-			switch (eventCode) {  
-				case XmlPullParser.START_DOCUMENT:
-					notes = new TreeSet<Note>();  
-					break;  
-				case XmlPullParser.START_TAG:
-					String name = parser.getName();
-					if ("note".equals(name))  
-						note = new Note();  
-					if (note != null) {  
-						if ("title".equals(name)) 
-							note.setTitle(parser.nextText());  
-						else if ("date".equals(name)) 
-							note.setDate(new Long(parser.nextText())); 
-						else if ("content".equals(name))
-							note.setContent(parser.nextText());
-					}  
-					break;  
-				case XmlPullParser.END_TAG:
-					if("note".equals(parser.getName()) && notes != null){  
-						notes.add(note);  
-						note = null;  
-					}
-					break;  
-			} 
-			eventCode = parser.next();  
-		}
+		try {
+			XmlPullParser parser = Xml.newPullParser();
+			parser.setInput(in, "UTF-8");
+			int eventCode = parser.getEventType();  
+			while (XmlPullParser.END_DOCUMENT != eventCode ) {  
+				switch (eventCode) {  
+					case XmlPullParser.START_DOCUMENT:
+						notes = new TreeSet<Note>();  
+						break;  
+					case XmlPullParser.START_TAG:
+						String name = parser.getName();
+						if ("note".equals(name))  
+							note = new Note();  
+						if (note != null) {  
+							if ("title".equals(name)) 
+								note.setTitle(parser.nextText());  
+							else if ("date".equals(name)) 
+								note.setDate(new Long(parser.nextText())); 
+							else if ("alarm".equals(name))
+								note.setAlarm(new Long(parser.nextText()));
+							else if ("content".equals(name))
+								note.setContent(parser.nextText());
+						}  
+						break;  
+					case XmlPullParser.END_TAG:
+						if("note".equals(parser.getName()) && notes != null){  
+							notes.add(note);  
+							note = null;  
+						}
+						break;  
+				} 
+				eventCode = parser.next();  
+			}
+		} catch (Exception e) { e.printStackTrace(); } finally { try { in.close(); } catch(Exception e) {} }
 		//System.out.println(notes);
 	}  
 	
@@ -77,6 +80,10 @@ public class Notes {
 				serializer.startTag(null, "date");
 				serializer.text(String.valueOf(note.getDate()));
 				serializer.endTag(null, "date");
+				
+				serializer.startTag(null, "alarm");
+				serializer.text(String.valueOf(note.getAlarm()));
+				serializer.endTag(null, "alarm");
 				
 				serializer.startTag(null, "content");
 				serializer.text(note.getContent());
@@ -104,6 +111,10 @@ public class Notes {
 			}
 		}
 		notes.add(note);
+	}
+	
+	public static void clear() {
+		notes.clear();
 	}
 
 	public static void delete(int id) {
