@@ -1,7 +1,11 @@
 package kth.proj.notepad;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
 import java.util.Calendar;
 import java.util.Set;
 import java.util.zip.Inflater;
@@ -9,6 +13,7 @@ import java.util.zip.Inflater;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.AssetManager;
@@ -76,7 +81,7 @@ public class EditNote extends Activity {
 
 		InputStream in = null;
 		try {
-			in = getAssets().open("database.xml");  
+			in = getClass().getClassLoader().getResourceAsStream("database.xml");
 			Notes.readXML(in);
 		} catch (Exception e) {} finally { try { in.close(); } catch (IOException e) {} }
         
@@ -310,6 +315,16 @@ public class EditNote extends Activity {
 		Notes.delete(currentNote.getId());
 		Toast.makeText(this, R.string.deleted, Toast.LENGTH_SHORT).show();
 		finish();
+	}
+	
+	@Override
+	protected void onDestroy() {
+		try {
+			FileOutputStream fos = openFileOutput("database.xml", Context.MODE_PRIVATE);
+			OutputStreamWriter writer = new OutputStreamWriter(fos, "UTF-8");
+			Notes.writeXML(writer);
+		} catch (Exception e) {}
+		super.onDestroy();
 	}
 
 	/**

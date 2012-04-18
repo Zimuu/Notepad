@@ -1,16 +1,13 @@
 package kth.proj.notepad;
 
 import java.io.InputStream;
+import java.io.Writer;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlSerializer;
 
 import android.util.Xml;
 
@@ -29,9 +26,9 @@ public class Notes {
 	
 	public static void readXML(InputStream in) throws Exception{
 		Note note = null;
-		XmlPullParser parser = Xml.newPullParser();  
 		
-		parser.setInput(in, "UTF-8");  
+		XmlPullParser parser = Xml.newPullParser();
+		parser.setInput(in, "UTF-8");
 		int eventCode = parser.getEventType();  
 		while (XmlPullParser.END_DOCUMENT != eventCode ) {  
 			switch (eventCode) {  
@@ -63,42 +60,32 @@ public class Notes {
 		System.out.println(notes);
 	}  
 	
-	public static void writeXML() {
+	public static void writeXML(Writer writer) {
+		XmlSerializer serializer = Xml.newSerializer();
 		try {
-			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder builder = factory.newDocumentBuilder();
-			Document doc = builder.newDocument();
-			
-			Element rootElement = doc.createElement("Notes");
-			doc.appendChild(rootElement);
-			
+			serializer.setOutput(writer);
+			serializer.startDocument("UTF-8", true);
+			serializer.startTag(null, "notes");
 			for (Note note : notes) {
-				Element resultTag = doc.createElement("Note");
-				rootElement.appendChild(resultTag);
-
-				Element titleTag = doc.createElement("title");
-				titleTag.appendChild(doc.createTextNode(note.getTitle()));
-				resultTag.appendChild(titleTag);
+				serializer.startTag(null, "note");
 				
-				Element dateTag = doc.createElement("date");
-				dateTag.appendChild(doc.createTextNode(String.valueOf(note.getDate())));
-				resultTag.appendChild(dateTag);
+				serializer.startTag(null, "title");
+				serializer.text(note.getTitle());
+				serializer.endTag(null, "title");
 				
-				Element contentTag = doc.createElement("content");
-				contentTag.appendChild(doc.createTextNode(
-						note.getContent()));
-				resultTag.appendChild(contentTag);
+				serializer.startTag(null, "date");
+				serializer.text(String.valueOf(note.getDate()));
+				serializer.endTag(null, "date");
+				
+				serializer.startTag(null, "content");
+				serializer.text(note.getContent());
+				serializer.endTag(null, "content");
+				serializer.endTag(null, "note");
 			}
-			//TransformerFactory tFactory = TransformerFactory.newInstance();
-			//Transformer transformer = tFactory.newTransformer();
-			//DOMSource source = new DOMSource(doc);
-			//StreamResult stream = new StreamResult(FILE);
-			
-			//transformer.transform(source, stream);
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}		
+			serializer.endTag(null, "notes");
+			serializer.endDocument();
+			writer.flush();
+		} catch (Exception e) {} finally { try { writer.close(); } catch (Exception e) {} }
 	}
 	
 	public static Set<Note> getNotes() {
