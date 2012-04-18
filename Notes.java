@@ -14,7 +14,7 @@ import android.util.Xml;
 
 public class Notes {
 
-	private static Set<Note> notes;
+	private static Set<Note> notes = new TreeSet<Note>() ;
 	
 	public static Note getNote(int id) {
 		for (Note note : notes) {
@@ -57,7 +57,7 @@ public class Notes {
 			} 
 			eventCode = parser.next();  
 		}
-		System.out.println(notes);
+		//System.out.println(notes);
 	}  
 	
 	public static void writeXML(Writer writer) {
@@ -67,6 +67,7 @@ public class Notes {
 			serializer.startDocument("UTF-8", true);
 			serializer.startTag(null, "notes");
 			for (Note note : notes) {
+				//System.out.println(note);
 				serializer.startTag(null, "note");
 				
 				serializer.startTag(null, "title");
@@ -85,7 +86,8 @@ public class Notes {
 			serializer.endTag(null, "notes");
 			serializer.endDocument();
 			writer.flush();
-		} catch (Exception e) {} finally { try { writer.close(); } catch (Exception e) {} }
+			//System.out.println("output finished");
+		} catch (Exception e) { e.printStackTrace(); } finally { try { writer.close(); } catch (Exception e) {} }
 	}
 	
 	public static Set<Note> getNotes() {

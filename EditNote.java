@@ -81,11 +81,11 @@ public class EditNote extends Activity {
 
 		InputStream in = null;
 		try {
-			in = getClass().getClassLoader().getResourceAsStream("database.xml");
+			in = this.openFileInput("database.xml");
 			Notes.readXML(in);
-		} catch (Exception e) {} finally { try { in.close(); } catch (IOException e) {} }
+		} catch (Exception e) { e.printStackTrace(); } finally { try { in.close(); } catch (Exception e) {} }
         
-		currentNote = Notes.getNote(1);
+		currentNote = Notes.getNote(2);
 		note.setText(currentNote.getContent());
 		title.setText(currentNote.getTitle());
 		
@@ -243,6 +243,7 @@ public class EditNote extends Activity {
 		String noteString = checkNote();
 		if (noteString == null) return;
 		
+		if (currentNote == null) currentNote = new Note();
 		currentNote.setTitle(title.getText().toString());
 		currentNote.setContent(noteString);
 		currentNote.setDate(System.currentTimeMillis());
@@ -320,8 +321,8 @@ public class EditNote extends Activity {
 	@Override
 	protected void onDestroy() {
 		try {
-			FileOutputStream fos = openFileOutput("database.xml", Context.MODE_PRIVATE);
-			OutputStreamWriter writer = new OutputStreamWriter(fos, "UTF-8");
+			FileOutputStream outStream = this.openFileOutput("database.xml", Context.MODE_WORLD_WRITEABLE);
+			OutputStreamWriter writer = new OutputStreamWriter(outStream, "UTF-8");
 			Notes.writeXML(writer);
 		} catch (Exception e) {}
 		super.onDestroy();
