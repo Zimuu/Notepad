@@ -22,3 +22,15 @@ radiobuttons ser ganska bra ut där i dialogen. Jag använder Spinner nu iställ
 Fixade alarm fönster för tidsval, om du vill göra alarm funktionen kan du använda den nu,
 jag tror det är bara skriva kod i //TODO kommentaren i onClick metoden.
 Den object som spara tid och datum för alarm är private Calendar calendar.
+------------
+Jag tror jag har fixat xml problemet nu, den är spara i en map som heter data/kth.proj.notepad/database.xml
+, som är en "internal storage" för android program.
+
+Använd för att läsa från xml-filen:
+ InputStream in = this.openFileInput("database.xml");
+ Notes.readXML(in);
+och för att skriva filen:
+ FileOutputStream outStream = this.openFileOutput("database.xml", Context.MODE_WORLD_WRITEABLE);
+ OutputStreamWriter writer = new OutputStreamWriter(outStream, "UTF-8");
+ Notes.writeXML(writer);
+------------
