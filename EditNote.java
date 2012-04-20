@@ -143,7 +143,8 @@ public class EditNote extends Activity {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					// TODO Auto-generated method stub
-					alarmed = true;					
+					alarmed = true;			
+					Toast.makeText(EditNote.this, R.string.alarmon, Toast.LENGTH_SHORT).show();		
 				}
 			})
         	.setNegativeButton(R.string.close, new CloseOperation())
@@ -314,6 +315,7 @@ public class EditNote extends Activity {
 	
 	private void font() {
 		font.show();
+		Toast.makeText(this, R.string.fontchanged, Toast.LENGTH_SHORT).show();
 	}
 	
 	private void alarmOn() {
@@ -326,6 +328,7 @@ public class EditNote extends Activity {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						alarmed = false;
+						Toast.makeText(EditNote.this, R.string.alarmoff, Toast.LENGTH_SHORT).show();
 					}
 				
 				})
@@ -368,8 +371,7 @@ public class EditNote extends Activity {
 			} catch (Exception e) {
 				s = 18;
 			}
-			textSize = (s > 50)
-					? 50 : s;
+			textSize = (s > 50) ? 50 : ((s < 10) ? 18 : s);
 			note.setTextSize(textSize);
 			int c = 0;
 			switch (color) {

@@ -10,6 +10,14 @@
     <string name="confirm">Confirm</string>
     
     <!-- Strings for NoteList class -->
+    <string name="notelist">Note List</string>
+    <string name="addnote">Add note</string>
+    <string name="deleteall">Delete all notes</string>
+    <string name="confirmdeleteall">Delete all notes?</string>
+    <string name="no_notes">No Notes</string>
+    <string name="menu_delete">Delete Note</string>
+    <string name="body">Body</string>
+    <string name="edit_note">Edit Note</string>
     
     <!-- Strings for EditNote class -->
     <string name="editnote">Edit Note</string>
@@ -24,9 +32,7 @@
     <string name="deleted">Note deleted</string>
     <string name="alarmon">Alarm On</string>
     <string name="alarmoff">Alarm Off</string>
-    
-    <!-- Strings for NoteList class -->
-    <string name="notelist">Note List</string>
+    <string name="fontchanged">Font changed</string>
     
     <!-- Strings for InfoDialog -->
     <string name="infodialog">Information</string>

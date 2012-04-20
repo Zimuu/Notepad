@@ -15,6 +15,7 @@ import android.util.Xml;
 public class Notes {
 
 	private static Set<Note> notes = new TreeSet<Note>() ;
+	private static Note draft;
 	
 	public static Note getNote(int id) {
 		for (Note note : notes) {
@@ -48,7 +49,20 @@ public class Notes {
 								note.setAlarm(new Long(parser.nextText()));
 							else if ("content".equals(name))
 								note.setContent(parser.nextText());
+							continue;
 						}  
+						if ("draft".equals(name))
+							draft = new Note();
+						if (draft != null) {
+							if ("title".equals(name)) 
+								draft.setTitle(parser.nextText());  
+							else if ("date".equals(name)) 
+								draft.setDate(new Long(parser.nextText())); 
+							else if ("alarm".equals(name))
+								draft.setAlarm(new Long(parser.nextText()));
+							else if ("content".equals(name))
+								draft.setContent(parser.nextText());
+						}
 						break;  
 					case XmlPullParser.END_TAG:
 						if("note".equals(parser.getName()) && notes != null){  
@@ -90,6 +104,25 @@ public class Notes {
 				serializer.endTag(null, "content");
 				serializer.endTag(null, "note");
 			}
+			if (draft != null) {
+				serializer.startTag(null, "draft");
+				serializer.startTag(null, "title");
+				serializer.text(draft.getTitle());
+				serializer.endTag(null, "title");
+				
+				serializer.startTag(null, "date");
+				serializer.text(String.valueOf(draft.getDate()));
+				serializer.endTag(null, "date");
+				
+				serializer.startTag(null, "alarm");
+				serializer.text(String.valueOf(draft.getAlarm()));
+				serializer.endTag(null, "alarm");
+				
+				serializer.startTag(null, "content");
+				serializer.text(draft.getContent());
+				serializer.endTag(null, "content");
+				serializer.endTag(null, "draft");
+			}
 			serializer.endTag(null, "notes");
 			serializer.endDocument();
 			writer.flush();
@@ -99,6 +132,14 @@ public class Notes {
 	
 	public static Set<Note> getNotes() {
 		return notes;
+	}
+	
+	public static Note getDraft() {
+		return draft;
+	}
+	
+	public static boolean checkDraft() {
+		return draft == null;
 	}
 	
 	public static void save(Note note) {
