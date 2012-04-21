@@ -29,15 +29,17 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
+import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.RadioGroup.OnCheckedChangeListener;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 @SuppressWarnings("unused")
 public class EditNote extends Activity {
@@ -46,9 +48,8 @@ public class EditNote extends Activity {
 	public static final int SEND = 1;
 	public static final int EXIT = 2;
 	public static final int FONT = 3;
-	public static final int ALARMON = 4;
+	public static final int ALARM = 4;
 	public static final int DELETE = 5;
-	public static final int ALARMOFF = 6;
 
 	public static final int DEFAULT_COLOR = Color.BLACK;
 	public static final int DEFAULT_STYLE = 0;
@@ -80,13 +81,13 @@ public class EditNote extends Activity {
         setContentView(R.layout.editnote);
         note = (EditText) findViewById(R.id.noteField);
         title = (EditText) findViewById(R.id.titleField);
-
+        /*
 		InputStream in = null;
 		try {
 			in = this.openFileInput("database.xml");
 			Notes.readXML(in);
 		} catch (Exception e) { e.printStackTrace(); }
-        /*
+		
 		currentNote = Notes.getNote(2);
 		if (currentNote.getAlarm() == -1);
 		else calendar.setTimeInMillis(currentNote.getAlarm());
@@ -101,7 +102,9 @@ public class EditNote extends Activity {
 			.setNegativeButton(R.string.close, new CloseOperation());
 
         createAlarmDialog();
+        System.out.println("alarm");
         createFontDialog();
+        System.out.println("font");
     }
     
     private void createAlarmDialog() {
@@ -135,6 +138,15 @@ public class EditNote extends Activity {
         	}
         });
         
+        ToggleButton tb = (ToggleButton) layout.findViewById(R.id.togglebutton);
+        tb.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton btn, boolean isChecked) {
+				alarmed = isChecked;
+			}
+        	
+        });
+        
         alarm = new AlertDialog.Builder(this)
         	.setView(layout)
         	.setTitle(R.string.alarm)
@@ -142,9 +154,9 @@ public class EditNote extends Activity {
 				
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
-					// TODO Auto-generated method stub
-					alarmed = true;			
-					Toast.makeText(EditNote.this, R.string.alarmon, Toast.LENGTH_SHORT).show();		
+					if (alarmed) {
+						//TODO
+					}
 				}
 			})
         	.setNegativeButton(R.string.close, new CloseOperation())
@@ -209,9 +221,8 @@ public class EditNote extends Activity {
 		menu.add(0, SEND, 0, R.string.send);
 		menu.add(0, EXIT, 0, R.string.exit);
 		menu.add(0, FONT, 0, R.string.font);
-		menu.add(0, ALARMON, 0, R.string.alarmon);
+		menu.add(0, ALARM, 0, R.string.alarm);
 		menu.add(0, DELETE, 0, R.string.delete);
-		menu.add(0, ALARMOFF, 0, R.string.alarmoff);
 		return super.onCreateOptionsMenu(menu);
 	}
 	
@@ -230,14 +241,12 @@ public class EditNote extends Activity {
 			case FONT:
 				font();
 				break;
-			case ALARMON:
-				alarmOn();
+			case ALARM:
+				alarm();
 				break;
 			case DELETE:
 				delete();
 				break;
-			case ALARMOFF:
-				alarmOff();
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -315,25 +324,10 @@ public class EditNote extends Activity {
 	
 	private void font() {
 		font.show();
-		Toast.makeText(this, R.string.fontchanged, Toast.LENGTH_SHORT).show();
 	}
 	
-	private void alarmOn() {
+	private void alarm() {
 		alarm.show();
-	}
-	
-	private void alarmOff() {
-		confirmBuilder
-				.setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						alarmed = false;
-						Toast.makeText(EditNote.this, R.string.alarmoff, Toast.LENGTH_SHORT).show();
-					}
-				
-				})
-				.setMessage(R.string.con5).create();
-		confirm.show();
 	}
 	
 	private void delete() {
@@ -392,6 +386,7 @@ public class EditNote extends Activity {
 			}
 			note.setTextColor(c);
 			note.setTypeface(note.getTypeface(), style);
+			Toast.makeText(EditNote.this, R.string.fontchanged, Toast.LENGTH_SHORT).show();
 		}
 	}
 	

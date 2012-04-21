@@ -30,8 +30,9 @@
     <string name="alarm">Alarm</string>
     <string name="delete">Delete</string>
     <string name="deleted">Note deleted</string>
-    <string name="alarmon">Alarm On</string>
-    <string name="alarmoff">Alarm Off</string>
+    <string name="alarmstate">Alarm State</string>
+    <string name="on">On</string>
+    <string name="off">Off</string>
     <string name="fontchanged">Font changed</string>
     
     <!-- Strings for InfoDialog -->
