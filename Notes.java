@@ -95,9 +95,11 @@ public class Notes {
 				serializer.text(String.valueOf(note.getDate()));
 				serializer.endTag(null, "date");
 				
-				serializer.startTag(null, "alarm");
-				serializer.text(String.valueOf(note.getAlarm()));
-				serializer.endTag(null, "alarm");
+				if (note.getAlarm() != -1){
+					serializer.startTag(null, "alarm");
+					serializer.text(String.valueOf(note.getAlarm()));
+					serializer.endTag(null, "alarm");
+				}
 				
 				serializer.startTag(null, "content");
 				serializer.text(note.getContent());
@@ -114,9 +116,11 @@ public class Notes {
 				serializer.text(String.valueOf(draft.getDate()));
 				serializer.endTag(null, "date");
 				
-				serializer.startTag(null, "alarm");
-				serializer.text(String.valueOf(draft.getAlarm()));
-				serializer.endTag(null, "alarm");
+				if (draft.getAlarm() != -1){
+					serializer.startTag(null, "alarm");
+					serializer.text(String.valueOf(draft.getAlarm()));
+					serializer.endTag(null, "alarm");
+				}
 				
 				serializer.startTag(null, "content");
 				serializer.text(draft.getContent());
@@ -132,6 +136,10 @@ public class Notes {
 	
 	public static Set<Note> getNotes() {
 		return notes;
+	}
+	
+	public static void saveDraft(Note note) {
+		draft = note;
 	}
 	
 	public static Note getDraft() {

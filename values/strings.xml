@@ -47,8 +47,7 @@
     <!-- Strings for ConfirmDialog -->
     <string name="phone">Phone number: </string>
     <string name="confirmdialog">Confirm</string>
-    <string name="con1">Exit without saving?</string>
-    <string name="con2">Save an empty note?</string>
+    <string name="con1">You have unsaved note, save as draft?</string>
     <string name="con3">Delete this note?</string>
     <string name="con4">Exit program?</string>
     <string name="con5">Cancle alarm?</string>

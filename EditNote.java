@@ -74,6 +74,7 @@ public class EditNote extends Activity {
 	private boolean alarmed;
 	private boolean saved;
 	private Note currentNote;
+	private boolean running;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -102,9 +103,9 @@ public class EditNote extends Activity {
 			.setNegativeButton(R.string.close, new CloseOperation());
 
         createAlarmDialog();
-        System.out.println("alarm");
         createFontDialog();
-        System.out.println("font");
+        running = true;
+        new Thread(new Draft()).start();
     }
     
     private void createAlarmDialog() {
@@ -268,6 +269,7 @@ public class EditNote extends Activity {
 		if (alarmed) currentNote.setAlarm(calendar.getTimeInMillis());
 		else currentNote.setAlarm(-1);
 		saved = true;
+		Notes.saveDraft(null);
 		Notes.save(currentNote);
 		Toast.makeText(EditNote.this, R.string.saved, Toast.LENGTH_SHORT).show();
 	}
@@ -315,7 +317,7 @@ public class EditNote extends Activity {
 					}
 				
 				});
-		if (saved)
+		if (!saved)
 			confirm = confirmBuilder.setMessage(R.string.con1).create();
 		else
 			confirm = confirmBuilder.setMessage(R.string.con4).create();
@@ -338,21 +340,18 @@ public class EditNote extends Activity {
 	
 	@Override
 	protected void onDestroy() {
-		try {
+		try {					
+			Notes.saveDraft(new Note(
+			title.getText().toString(),
+			System.currentTimeMillis(), 
+			(alarmed) ? calendar.getTimeInMillis() : -1, 
+			note.getText().toString()));
+			running = false;
 			FileOutputStream outStream = this.openFileOutput("database.xml", Context.MODE_WORLD_WRITEABLE);
 			OutputStreamWriter writer = new OutputStreamWriter(outStream, "UTF-8");
 			Notes.writeXML(writer);
 		} catch (Exception e) { e.printStackTrace(); }
 		super.onDestroy();
-	}
-
-	/**
-	 * Change status of note to unsaved when user presses any key
-	 */
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		saved = false;
-		return super.onKeyDown(keyCode, event);
 	}
 	
 	private class FontListener implements DialogInterface.OnClickListener {
@@ -396,5 +395,32 @@ public class EditNote extends Activity {
 		public void onClick(DialogInterface dialog, int which) {
 			dialog.dismiss();
 		}
+	}
+	
+	private class Draft implements Runnable {
+		private int timer = 5;
+		@Override
+		public void run() {
+			while (running) {
+				if (timer == 0) {
+					Notes.saveDraft(new Note(
+							title.getText().toString(),
+							System.currentTimeMillis(), 
+							(alarmed) ? calendar.getTimeInMillis() : -1, 
+							note.getText().toString()));
+					timer = 5;
+					System.out.println("save draft");
+				}
+				timer--;
+				if (!currentNote.getContent().equals(note.getText().toString())||
+						!currentNote.getTitle().equals(title.getText().toString())) 
+					saved = false;
+				System.out.println(timer);
+				try {
+					Thread.sleep(5000);
+				} catch (Exception e) {}
+			}
+		}
+		
 	}
 }
