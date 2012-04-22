@@ -73,6 +73,7 @@
  	    <item>Italic</item>
  	    <item>Bold</item>
  	</string-array>
+ 	<string name="reset">Reset</string>
  	
  	<!-- Strings for AlarmDialog -->
  	<string name="date">Set date</string>

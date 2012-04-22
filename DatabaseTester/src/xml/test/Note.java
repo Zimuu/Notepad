@@ -1,4 +1,4 @@
-package kth.proj.notepad;
+package xml.test;
 
 public final class Note implements Comparable<Note>{
 

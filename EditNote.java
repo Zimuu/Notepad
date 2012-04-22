@@ -25,10 +25,12 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -53,7 +55,7 @@ public class EditNote extends Activity {
 
 	public static final int DEFAULT_COLOR = Color.BLACK;
 	public static final int DEFAULT_STYLE = 0;
-	public static final int DEFAULT_Size = 12;
+	public static final float DEFAULT_SIZE = 18f;
 	
 	private EditText note;
 	private EditText title;
@@ -63,18 +65,18 @@ public class EditNote extends Activity {
 	private Builder confirmBuilder;
 	
 	private AlertDialog alarm;
-	private Calendar calendar;
+	private Calendar calendar = Calendar.getInstance();
 	
 	private AlertDialog font;
-	private TextView size;
-	private int style;
-	private int color;
-	private int textSize;
+	private int style = DEFAULT_COLOR;
+	private int color = DEFAULT_STYLE;
+	private float size = DEFAULT_SIZE;
 	
 	private boolean alarmed;
 	private boolean saved;
 	private Note currentNote;
-	private boolean running;
+	//private boolean running = true;
+	//private Thread draftThread;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -82,19 +84,22 @@ public class EditNote extends Activity {
         setContentView(R.layout.editnote);
         note = (EditText) findViewById(R.id.noteField);
         title = (EditText) findViewById(R.id.titleField);
+        
         /*
 		InputStream in = null;
 		try {
 			in = this.openFileInput("database.xml");
 			Notes.readXML(in);
 		} catch (Exception e) { e.printStackTrace(); }
-		
-		currentNote = Notes.getNote(2);
-		if (currentNote.getAlarm() == -1);
-		else calendar.setTimeInMillis(currentNote.getAlarm());
+        if (Notes.hasDraft()) currentNote = Notes.getDraft();
+        else currentNote = new Note();
+		currentNote = Notes.getNote(1);
+		if (currentNote.getAlarm() != -1) calendar.setTimeInMillis(currentNote.getAlarm());
 		note.setText(currentNote.getContent());
 		title.setText(currentNote.getTitle());
 		*/
+		System.out.println(Notes.getNotes());
+		
         infoBuilder = new AlertDialog.Builder(this)
 			.setTitle(R.string.infodialog)
 			.setPositiveButton(R.string.confirm, new CloseOperation());
@@ -104,8 +109,6 @@ public class EditNote extends Activity {
 
         createAlarmDialog();
         createFontDialog();
-        running = true;
-        new Thread(new Draft()).start();
     }
     
     private void createAlarmDialog() {
@@ -114,7 +117,6 @@ public class EditNote extends Activity {
 
         DatePicker datepicker = (DatePicker) layout.findViewById(R.id.datepicker);
         TimePicker timepicker = (TimePicker) layout.findViewById(R.id.timepicker);
-        calendar = Calendar.getInstance();
         
         datepicker.init(calendar.get(Calendar.YEAR)
         		, calendar.get(Calendar.MONTH)
@@ -132,10 +134,8 @@ public class EditNote extends Activity {
             
         	@Override
         	public void onTimeChanged(TimePicker view, int hourOfDay, int minute) {
-        		calendar.set(calendar.get(Calendar.YEAR)
-                		, calendar.get(Calendar.MONTH)
-                		, calendar.get(Calendar.DAY_OF_MONTH),
-                		hourOfDay, minute);
+        		calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+        		calendar.set(Calendar.MINUTE, minute);
         	}
         });
         
@@ -167,21 +167,15 @@ public class EditNote extends Activity {
     private void createFontDialog() {
         LayoutInflater inflator = getLayoutInflater();
         View layout = inflator.inflate(R.layout.fontdialog, (ViewGroup) findViewById(R.id.fontlayout));
-        font = new AlertDialog.Builder(this)
-        	.setView(layout)
-        	.setTitle(R.string.font)
-        	.setPositiveButton(R.string.confirm, new FontListener())
-        	.setNegativeButton(R.string.close, new CloseOperation())
-        	.create();
         
-        size = (TextView) layout.findViewById(R.id.sizeField);
+        final EditText sizeField = (EditText) layout.findViewById(R.id.sizeField);
         
-        Spinner fontSpinner = (Spinner) layout.findViewById(R.id.fontspinner);
+        final Spinner styleSpinner = (Spinner) layout.findViewById(R.id.fontspinner);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
         		this, R.array.styles, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        fontSpinner.setAdapter(adapter);
-        fontSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+        styleSpinner.setAdapter(adapter);
+        styleSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 
 			@Override
 			public void onItemSelected(AdapterView<?> parent, View view,
@@ -195,7 +189,7 @@ public class EditNote extends Activity {
 			}
         });
         
-        Spinner colorSpinner = (Spinner) layout.findViewById(R.id.colorspinner);
+        final Spinner colorSpinner = (Spinner) layout.findViewById(R.id.colorspinner);
         adapter = ArrayAdapter.createFromResource(
         		this, R.array.colors, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -205,7 +199,22 @@ public class EditNote extends Activity {
 			@Override
 			public void onItemSelected(AdapterView<?> parent, View view,
 					int position, long id) {
-				color = position;
+				switch (position) {
+					case 0:
+						color = Color.BLACK;
+						break;
+					case 1:
+						color = Color.RED;
+						break;
+					case 2:
+						color = Color.BLUE;
+						break;
+					case 3:
+						color = Color.YELLOW;
+						break;
+					case 4:
+						color = Color.GREEN;
+				}
 			}
 
 			@Override
@@ -214,6 +223,37 @@ public class EditNote extends Activity {
 			}
 			
         });
+        Button button = (Button) layout.findViewById(R.id.reset);
+        button.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+				size = DEFAULT_SIZE;
+				style = DEFAULT_STYLE;
+				color = DEFAULT_COLOR;
+				confirmFont();
+			}
+        	
+        });
+        
+        font = new AlertDialog.Builder(this)
+    	.setView(layout)
+    	.setTitle(R.string.font)
+    	.setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+    		
+    		@Override
+    		public void onClick(DialogInterface dialog, int which) {
+    			float s = 0;
+    			try {
+    				s = Float.parseFloat(sizeField.getText().toString());
+    			} catch (Exception e) {
+    				s = DEFAULT_SIZE;
+    			}
+    			size = (s > 50) ? 50 : ((s < 10) ? DEFAULT_SIZE : s);
+				confirmFont();
+    		}
+    	})
+    	.setNegativeButton(R.string.close, new CloseOperation())
+    	.create();
     }
 
 	@Override
@@ -271,6 +311,7 @@ public class EditNote extends Activity {
 		saved = true;
 		Notes.saveDraft(null);
 		Notes.save(currentNote);
+		System.out.println(Notes.getNotes());
 		Toast.makeText(EditNote.this, R.string.saved, Toast.LENGTH_SHORT).show();
 	}
 	
@@ -338,15 +379,39 @@ public class EditNote extends Activity {
 		finish();
 	}
 	
+	private void saveDraft() {
+		Notes.saveDraft(new Note(
+				title.getText().toString(),
+				System.currentTimeMillis(), 
+				(alarmed) ? calendar.getTimeInMillis() : -1, 
+				note.getText().toString()));		
+	}
+	
+	private void confirmFont() {
+		note.setTextSize(size);
+		note.setTextColor(color);
+		note.setTypeface(note.getTypeface(), style);
+		Toast.makeText(EditNote.this, R.string.fontchanged, Toast.LENGTH_SHORT).show();	
+	}
+	
+	@Override
+	protected void onResume() {
+        //draftThread = new Thread(new Draft());
+        //draftThread.start();
+		super.onResume();
+	}
+	
+	@Override
+	protected void onPause() {
+		//running = false;
+		super.onPause();
+	}
+	
 	@Override
 	protected void onDestroy() {
-		try {					
-			Notes.saveDraft(new Note(
-			title.getText().toString(),
-			System.currentTimeMillis(), 
-			(alarmed) ? calendar.getTimeInMillis() : -1, 
-			note.getText().toString()));
-			running = false;
+		try {
+			System.out.println("System.exit");
+			saveDraft();
 			FileOutputStream outStream = this.openFileOutput("database.xml", Context.MODE_WORLD_WRITEABLE);
 			OutputStreamWriter writer = new OutputStreamWriter(outStream, "UTF-8");
 			Notes.writeXML(writer);
@@ -355,37 +420,9 @@ public class EditNote extends Activity {
 	}
 	
 	private class FontListener implements DialogInterface.OnClickListener {
-
+		
 		@Override
-		public void onClick(DialogInterface dialog, int which) {
-			int s = 0;
-			try {
-				s = Integer.parseInt(size.getText().toString());
-			} catch (Exception e) {
-				s = 18;
-			}
-			textSize = (s > 50) ? 50 : ((s < 10) ? 18 : s);
-			note.setTextSize(textSize);
-			int c = 0;
-			switch (color) {
-				case 0:
-					c = Color.BLACK;
-					break;
-				case 1:
-					c = Color.RED;
-					break;
-				case 2:
-					c = Color.BLUE;
-					break;
-				case 3:
-					c = Color.YELLOW;
-					break;
-				case 4:
-					c = Color.GREEN;
-			}
-			note.setTextColor(c);
-			note.setTypeface(note.getTypeface(), style);
-			Toast.makeText(EditNote.this, R.string.fontchanged, Toast.LENGTH_SHORT).show();
+		public void onClick(DialogInterface dialog, int which) {	
 		}
 	}
 	
@@ -396,24 +433,19 @@ public class EditNote extends Activity {
 			dialog.dismiss();
 		}
 	}
-	
+	/*
 	private class Draft implements Runnable {
 		private int timer = 5;
 		@Override
 		public void run() {
 			while (running) {
-				if (timer == 0) {
-					Notes.saveDraft(new Note(
-							title.getText().toString(),
-							System.currentTimeMillis(), 
-							(alarmed) ? calendar.getTimeInMillis() : -1, 
-							note.getText().toString()));
+				if (timer <= 0 && changed()) {
+					saveDraft();
 					timer = 5;
-					System.out.println("save draft");
+					System.out.println(Notes.getDraft());
 				}
 				timer--;
-				if (!currentNote.getContent().equals(note.getText().toString())||
-						!currentNote.getTitle().equals(title.getText().toString())) 
+				if (changed()) 
 					saved = false;
 				System.out.println(timer);
 				try {
@@ -422,5 +454,11 @@ public class EditNote extends Activity {
 			}
 		}
 		
+		private boolean changed() {
+			return !currentNote.getTitle().equals(title.getText().toString())
+					|| !currentNote.getContent().equals(note.getText().toString());
+		}
+		
 	}
+	*/
 }

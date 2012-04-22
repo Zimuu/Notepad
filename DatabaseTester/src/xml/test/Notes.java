@@ -1,4 +1,4 @@
-package kth.proj.notepad;
+package xml.test;
 
 import java.io.InputStream;
 import java.io.Writer;
