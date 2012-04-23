@@ -13,8 +13,9 @@ import android.util.Xml;
 
 public class Notes {
 
-	private static Set<Note> notes = new TreeSet<Note>() ;
+	private static Set<Note> notes = new TreeSet<Note>();
 	private static Note draft;
+	private static Set<Note> alarms = new TreeSet<Note>();
 	
 	public static Note getNote(int id) {
 		for (Note note : notes) {
@@ -149,6 +150,8 @@ public class Notes {
 	}
 	
 	public static void save(Note note) {
+		if (note.getAlarm() != -1 && !alarms.contains(note)) 
+			alarms.add(note);
 		Iterator<Note> it = notes.iterator();
 		while (it.hasNext()) {
 			Note n = it.next();
@@ -158,6 +161,13 @@ public class Notes {
 			}
 		}
 		notes.add(note);
+	}
+	
+	public static Set<Note> getUnhandledAlarms() {
+		Set<Note> temp = new TreeSet<Note>();
+		temp.addAll(alarms);
+		alarms.clear();
+		return temp;
 	}
 	
 	public static void clear() {

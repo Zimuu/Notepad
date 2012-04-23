@@ -1,5 +1,8 @@
 package kth.proj.notepad;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public final class Note implements Comparable<Note>{
 
 	private static int ID = 0;
@@ -51,6 +54,12 @@ public final class Note implements Comparable<Note>{
 				+ "]\r\ntitle: " + title 
 				+ "\r\ndate: " + date + "\r\nalarm: " + alarm
 				+ "\r\ncontent: " + content + "\r\n";
+	}
+	
+	public String dateFormat() {
+		Date d = new Date(date);
+		SimpleDateFormat sdf = new SimpleDateFormat("d MMM"); 
+		return sdf.format(d);
 	}
 
 	public String getTitle() {

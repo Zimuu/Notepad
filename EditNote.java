@@ -68,6 +68,8 @@ public class EditNote extends Activity {
 	private Calendar calendar = Calendar.getInstance();
 	
 	private AlertDialog font;
+	private Spinner colorSpinner;
+	private Spinner styleSpinner;
 	private int style = DEFAULT_COLOR;
 	private int color = DEFAULT_STYLE;
 	private float size = DEFAULT_SIZE;
@@ -85,20 +87,21 @@ public class EditNote extends Activity {
         note = (EditText) findViewById(R.id.noteField);
         title = (EditText) findViewById(R.id.titleField);
         
-        /*
-		InputStream in = null;
-		try {
-			in = this.openFileInput("database.xml");
-			Notes.readXML(in);
-		} catch (Exception e) { e.printStackTrace(); }
-        if (Notes.hasDraft()) currentNote = Notes.getDraft();
-        else currentNote = new Note();
-		currentNote = Notes.getNote(1);
+        Intent i = getIntent();
+        int code = i.getIntExtra(NoteList.OPERATION, 0);
+        switch (code) {
+	        case -2:
+	        	currentNote = Notes.getDraft();
+	        	break;
+	        case - 1:
+	        	currentNote = new Note();
+	        	break;
+        	default:
+        		currentNote = Notes.getNote(code);
+        }
 		if (currentNote.getAlarm() != -1) calendar.setTimeInMillis(currentNote.getAlarm());
 		note.setText(currentNote.getContent());
 		title.setText(currentNote.getTitle());
-		*/
-		System.out.println(Notes.getNotes());
 		
         infoBuilder = new AlertDialog.Builder(this)
 			.setTitle(R.string.infodialog)
@@ -140,10 +143,15 @@ public class EditNote extends Activity {
         });
         
         ToggleButton tb = (ToggleButton) layout.findViewById(R.id.togglebutton);
+        tb.setChecked((currentNote.getAlarm() == -1) ? false : true);
         tb.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			@Override
 			public void onCheckedChanged(CompoundButton btn, boolean isChecked) {
 				alarmed = isChecked;
+				if (alarmed)
+					currentNote.setAlarm(calendar.getTimeInMillis());
+				else
+					currentNote.setAlarm(-1);
 			}
         	
         });
@@ -170,7 +178,7 @@ public class EditNote extends Activity {
         
         final EditText sizeField = (EditText) layout.findViewById(R.id.sizeField);
         
-        final Spinner styleSpinner = (Spinner) layout.findViewById(R.id.fontspinner);
+        styleSpinner = (Spinner) layout.findViewById(R.id.fontspinner);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
         		this, R.array.styles, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -189,7 +197,7 @@ public class EditNote extends Activity {
 			}
         });
         
-        final Spinner colorSpinner = (Spinner) layout.findViewById(R.id.colorspinner);
+        colorSpinner = (Spinner) layout.findViewById(R.id.colorspinner);
         adapter = ArrayAdapter.createFromResource(
         		this, R.array.colors, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -329,6 +337,10 @@ public class EditNote extends Activity {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						String phoneNumber = phone.getText().toString();
+						if (phoneNumber.trim().length() == 0) {
+							Toast.makeText(EditNote.this, R.string.err2, Toast.LENGTH_SHORT).show();
+							return ;
+						}
 						Uri uri = Uri.parse("smsto:" + phoneNumber);
 						Intent i = new Intent(Intent.ACTION_SENDTO, uri);
 						i.putExtra("sms_body", string);
@@ -367,6 +379,8 @@ public class EditNote extends Activity {
 	
 	private void font() {
 		font.show();
+		colorSpinner.setSelection(color);
+		styleSpinner.setSelection(style);
 	}
 	
 	private void alarm() {
@@ -412,18 +426,11 @@ public class EditNote extends Activity {
 		try {
 			System.out.println("System.exit");
 			saveDraft();
-			FileOutputStream outStream = this.openFileOutput("database.xml", Context.MODE_WORLD_WRITEABLE);
+			FileOutputStream outStream = this.openFileOutput("database.xml", Context.MODE_PRIVATE);
 			OutputStreamWriter writer = new OutputStreamWriter(outStream, "UTF-8");
 			Notes.writeXML(writer);
 		} catch (Exception e) { e.printStackTrace(); }
 		super.onDestroy();
-	}
-	
-	private class FontListener implements DialogInterface.OnClickListener {
-		
-		@Override
-		public void onClick(DialogInterface dialog, int which) {	
-		}
 	}
 	
 	private class CloseOperation implements DialogInterface.OnClickListener {

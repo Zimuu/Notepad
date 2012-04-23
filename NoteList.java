@@ -1,9 +1,10 @@
 package kth.proj.notepad;
- 
+
 import java.io.InputStream;
-import java.util.HashSet;
-import java.util.Set;
- 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.DialogInterface;
@@ -12,162 +13,174 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
- 
+import android.widget.SimpleAdapter;
 
-@SuppressWarnings("unused")
+
 public class NoteList extends ListActivity {
-	private ListView listView;
-	//private NotesAdapter notesAdapter;
-	//private ArrayAdapter arrayAdapter;
-	private static final int ADDNOTE = -1;
-	private static final int DELETEALLNOTES = 1;
-	private static final int DELETENOTE = 2;   
-	private static final int EDITNOTE = 3;
-	//private static final int NEW_NOTE = -1;
-	private static final String KEY_TITLE = "title";
-	private static final String KEY_BODY = "body";
-	private static final String KEY_ROWID = "_id";
-	private AlertDialog confirmDelete;
-	private AdapterView<?> adapter;
 	
-	private Set<Note> notes;
-   
+	public static final String OPERATION = "operation";
+	public static final int ADDNOTE = -1; 
+	public static final int OPENDRAFT = -2;
+	public static final String DATE = "date";
+	public static final String TITLE = "title";
+	public static final String ID = "ID";
+	
+    private static final int DELETEALL = 2;
+    private static final int DELETENOTE = 4;
+    private static final int EDITNOTE = 3;
+
+	
+    
 	@Override
-	public void onCreate(Bundle savedInstanceState) {           
+	public void onCreate(Bundle savedInstanceState) {    	
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.notelist);
-		final ListView lView = getListView();
 		
-		registerForContextMenu(lView);
-		readTesting();//switch to readFromDataBase() when testing database
-		
-		setListAdapter(new ArrayAdapter<Note>(this, R.layout.notelist, (Note[]) notes.toArray()));
+		init();
 		updateList();
-		lView.setOnItemClickListener(new OnItemClickListener() {         
-			@Override
-			public void onItemClick(AdapterView<?> adapter, View view, int position, long arg) {
-				Note listItem = (Note) lView.getItemAtPosition(position);
-			}
-		}); 
 	}
-    
-	/**
-	 * read from database
-	 */
-	private void readFromDatabase() {
+	
+	private void init() {
+		InputStream in = null;
 		try {
-			InputStream in = this.openFileInput("database.xml");
+			in = this.openFileInput("database.xml");
 			Notes.readXML(in);
 		} catch (Exception e) { e.printStackTrace(); }
-		notes = Notes.getNotes();
+		
+		if (Notes.hasDraft()) {
+			new AlertDialog.Builder(this)
+				.setTitle(R.string.confirmdialog)
+				.setMessage(R.string.con6)
+				.setPositiveButton(R.string.open, new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+			        	Intent i = new Intent(NoteList.this, EditNote.class);
+			        	i.putExtra(OPERATION, OPENDRAFT);
+			        	NoteList.this.startActivity(i);
+					}
+					
+				})
+				.setNegativeButton(R.string.close, new CloseOperation())
+				.create().show();
+		}
 	}
-	
-	/**
-	 * recommended for testing
-	 */
-	private void readTesting() {
-		notes = new HashSet<Note>();
-		notes.add(new Note("hey1", 1, 1, "content1"));
-		notes.add(new Note("hey2", 2, 1, "content2"));
-		notes.add(new Note("hey3", 3, 1, "content3"));
-		notes.add(new Note("hey4", 4, 1, "content4"));
-		notes.add(new Note("hey5", 5, 1, "content5"));
-		notes.add(new Note("hey5", 6, 1, "content6"));
-	}
-	
+    
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
-		super.onListItemClick(l, v, position, id);                                        
+		super.onListItemClick(l, v, position, id); 
 		Intent i = new Intent(this, EditNote.class);
-		startActivityForResult(i, position);//Will this work? use getListView().getItemAtPosition(position)
-	}   
-
+		i.putExtra(OPERATION, position);
+		startActivityForResult(i, EDITNOTE);
+	}
+    
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		menu.add(0, ADDNOTE, 0, R.string.addnote);
-		menu.add(0, DELETENOTE, 0, R.string.delete);
-		menu.add(0, DELETEALLNOTES, 0, R.string.deleteall);
+		menu.add(0, ADDNOTE + 2, 0, R.string.addnote);
+		menu.add(0, DELETEALL, 0, R.string.deleteall);
 		return super.onCreateOptionsMenu(menu);
 	}
-
+        
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-			case R.string.addnote:
+			case ADDNOTE + 2:
 				createNote();
-				return true;
-			case R.string.deleteall:
-				confirmDelete =  new AlertDialog.Builder(this)
-						.setTitle(R.string.confirmdeleteall)
-						.setPositiveButton(R.string.close, new CloseOperation())
-						.create();
-				clearNotes();
-				return true;
-			default:
-				return super.onOptionsItemSelected(item);
+				break;
+			case DELETEALL:
+				new AlertDialog.Builder(this)
+				.setTitle(R.string.confirmdialog)
+				.setMessage(R.string.con2)
+				.setPositiveButton(R.string.clear, new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						Notes.clear();
+						updateList();
+					}
+					
+				})
+				.setNegativeButton(R.string.close, new CloseOperation())
+				.create().show();
+				break;
 		}
-	}                       
-
+	    return super.onOptionsItemSelected(item);
+	}
+	
+	@Override
 	public boolean onContextItemSelected(MenuItem item) {
+		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
 		switch(item.getItemId()) {
 			case DELETENOTE:
-				AdapterContextMenuInfo deleteInfo = (AdapterContextMenuInfo) item.getMenuInfo();
-				Notes.delete(deleteInfo.position);
+				Notes.delete(info.position); 
 				return true;
 			case EDITNOTE:
-				AdapterContextMenuInfo editInfo = (AdapterContextMenuInfo) item.getMenuInfo();
 				Intent i = new Intent(this, EditNote.class);
-				i.putExtra(KEY_ROWID, editInfo.position);
-				startActivityForResult(i,EDITNOTE);
+				i.putExtra(OPERATION, info.position);
+				startActivityForResult(i, EDITNOTE);
+				updateList();
 				return true;
 		}
 		updateList();
 		return super.onContextItemSelected(item);
 	}
-
-	private void createNote() {
+        
+	private void createNote() { 
 		Intent i = new Intent(this, EditNote.class);
-		startActivityForResult(i, ADDNOTE);
+		i.putExtra(OPERATION, ADDNOTE);
+		startActivity(i);
 	}   
-
-	/**
-	 * you can change this commentary back to code in your project
-	 * i just don't want see error signs in my project :)
-	 */
-	private void updateList() {   //TODO
-		//String[] from = new String[] { NotesDbAdapter.KEY_TITLE };
-		//int[] to = new int[] { R.id.text1 };
-		//SimpleCursorAdapter notes =  new SimpleCursorAdapter(this, R.layout.notes_row, c, from, to);
-		//setListAdapter(notes);
+		
+	private void updateList() {
+		List<HashMap<String, String>> notes = new ArrayList<HashMap<String, String>>();
+		for (Note note : Notes.getNotes()) {
+			HashMap<String, String> map = new HashMap<String, String>();
+			map.put(DATE, note.dateFormat());
+			map.put(TITLE, note.getTitle());
+			notes.add(map);
+		}
+		SimpleAdapter listAdapter = new SimpleAdapter(
+				this, notes, R.layout.note, 
+				new String[] { DATE, TITLE},
+				new int[] { R.id.date, R.id.title });
+		setListAdapter(listAdapter);
 	}
-
-	public void clearNotes() {
-		Notes.clear();
-	}
-
+	    
 	private class CloseOperation implements DialogInterface.OnClickListener {
 	
-	@Override
+		@Override
 		public void onClick(DialogInterface dialog, int which) {
 			dialog.dismiss();
 		}
 	}
+
+	 @Override
+	 protected void onStart() {
+		 super.onStart();
+	 }
 	
-	@Override
-	protected void onStart() {}
-	@Override
-	protected void onRestart() {}
-	@Override
-	protected void onResume() {}
-	@Override
-	protected void onPause() {}
-	@Override
-	protected void onStop() {}
-	@Override
-	protected void onDestroy() {}
-}
+	 @Override
+	 protected void onRestart() {
+		 super.onRestart();
+	 }
+	
+	 @Override
+	 protected void onResume() {
+		 super.onResume();
+	 }
+	
+	 @Override
+	 protected void onPause() {
+		 super.onPause();
+	 }
+	
+	 @Override
+	 protected void onStop() {
+		 super.onStop();
+	 }
+	 @Override
+	 protected void onDestroy()  {
+		 super.onDestroy();
+	 }
+	    
+ }
