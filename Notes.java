@@ -1,5 +1,4 @@
 package kth.proj.notepad;
-
 import java.io.InputStream;
 import java.io.Writer;
 import java.util.Iterator;
@@ -50,18 +49,17 @@ public class Notes {
 								note.setAlarm(new Long(parser.nextText()));
 							else if ("content".equals(name))
 								note.setContent(parser.nextText());
-							continue;
-						}  
+						} 
 						if ("draft".equals(name))
 							draft = new Note();
 						if (draft != null) {
-							if ("title".equals(name)) 
+							if ("dtitle".equals(name)) 
 								draft.setTitle(parser.nextText());  
-							else if ("date".equals(name)) 
+							else if ("ddate".equals(name)) 
 								draft.setDate(new Long(parser.nextText())); 
-							else if ("alarm".equals(name))
+							else if ("dalarm".equals(name))
 								draft.setAlarm(new Long(parser.nextText()));
-							else if ("content".equals(name))
+							else if ("dcontent".equals(name))
 								draft.setContent(parser.nextText());
 						}
 						break;  
@@ -74,7 +72,9 @@ public class Notes {
 				} 
 				eventCode = parser.next();
 			}
-		} catch (Exception e) { e.printStackTrace(); } finally { try { in.close(); } catch(Exception e) {} }
+		} catch (Exception e) { 
+			e.printStackTrace(); 
+		} finally { try { in.close(); } catch(Exception e) {} }
 	}  
 	
 	public static void writeXML(Writer writer) {
@@ -107,23 +107,23 @@ public class Notes {
 			}
 			if (draft != null) {
 				serializer.startTag(null, "draft");
-				serializer.startTag(null, "title");
+				serializer.startTag(null, "dtitle");
 				serializer.text(draft.getTitle());
-				serializer.endTag(null, "title");
+				serializer.endTag(null, "dtitle");
 				
-				serializer.startTag(null, "date");
+				serializer.startTag(null, "ddate");
 				serializer.text(String.valueOf(draft.getDate()));
-				serializer.endTag(null, "date");
+				serializer.endTag(null, "ddate");
 				
 				if (draft.getAlarm() != -1){
-					serializer.startTag(null, "alarm");
+					serializer.startTag(null, "dalarm");
 					serializer.text(String.valueOf(draft.getAlarm()));
-					serializer.endTag(null, "alarm");
+					serializer.endTag(null, "dalarm");
 				}
 				
-				serializer.startTag(null, "content");
+				serializer.startTag(null, "dcontent");
 				serializer.text(draft.getContent());
-				serializer.endTag(null, "content");
+				serializer.endTag(null, "dcontent");
 				serializer.endTag(null, "draft");
 			}
 			serializer.endTag(null, "notes");
