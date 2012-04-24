@@ -165,8 +165,8 @@ Notes.print();
 				public void onClick(DialogInterface dialog, int which) {
 					if (alarmed) 
 		            			if (calendar.getTimeInMillis() <= System.currentTimeMillis()) {
-		            			calendar.setTime(new Date(System.currentTimeMillis()));
-		            			Toast.makeText(EditNote.this, R.string.illegalalarm, Toast.LENGTH_SHORT).show();
+		            				calendar.setTime(new Date(System.currentTimeMillis()));
+		            				Toast.makeText(EditNote.this, R.string.illegalalarm, Toast.LENGTH_SHORT).show();
 		            			} else currentNote.setAlarm(calendar.getTimeInMillis());
 					else
 						currentNote.setAlarm(-1);
