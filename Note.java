@@ -32,7 +32,7 @@ public final class Note implements Comparable<Note>{
 				o.title == this.title &&
 				o.content == this.content)
 			return 0;
-		return o.date > this.date ? -1 : 1;
+		return o.date > this.date ? 1 : -1;
 	}
 	
 	@Override

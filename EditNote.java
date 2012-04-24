@@ -77,8 +77,8 @@ public class EditNote extends Activity {
 	private boolean alarmed;
 	private boolean saved;
 	private Note currentNote;
-	//private boolean running = true;
-	//private Thread draftThread;
+	private boolean running = true;
+	private Thread draftThread;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -89,6 +89,7 @@ public class EditNote extends Activity {
         
         Intent i = getIntent();
         int code = i.getIntExtra(NoteList.OPERATION, 0);
+        System.out.println(code);
         switch (code) {
 	        case -2:
 	        	currentNote = Notes.getDraft();
@@ -102,7 +103,8 @@ public class EditNote extends Activity {
 		if (currentNote.getAlarm() != -1) calendar.setTimeInMillis(currentNote.getAlarm());
 		note.setText(currentNote.getContent());
 		title.setText(currentNote.getTitle());
-		
+
+Notes.print();
         infoBuilder = new AlertDialog.Builder(this)
 			.setTitle(R.string.infodialog)
 			.setPositiveButton(R.string.confirm, new CloseOperation());
@@ -112,6 +114,8 @@ public class EditNote extends Activity {
 
         createAlarmDialog();
         createFontDialog();
+        draftThread = new Thread(new Draft());
+        draftThread.start();
     }
     
     private void createAlarmDialog() {
@@ -148,10 +152,6 @@ public class EditNote extends Activity {
 			@Override
 			public void onCheckedChanged(CompoundButton btn, boolean isChecked) {
 				alarmed = isChecked;
-				if (alarmed)
-					currentNote.setAlarm(calendar.getTimeInMillis());
-				else
-					currentNote.setAlarm(-1);
 			}
         	
         });
@@ -163,9 +163,10 @@ public class EditNote extends Activity {
 				
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
-					if (alarmed) {
-						//TODO
-					}
+					if (alarmed)
+						currentNote.setAlarm(calendar.getTimeInMillis());
+					else
+						currentNote.setAlarm(-1);
 				}
 			})
         	.setNegativeButton(R.string.close, new CloseOperation())
@@ -319,8 +320,8 @@ public class EditNote extends Activity {
 		saved = true;
 		Notes.saveDraft(null);
 		Notes.save(currentNote);
-		System.out.println(Notes.getNotes());
 		Toast.makeText(EditNote.this, R.string.saved, Toast.LENGTH_SHORT).show();
+Notes.print();
 	}
 	
 	private void send() {
@@ -410,25 +411,27 @@ public class EditNote extends Activity {
 	
 	@Override
 	protected void onResume() {
-        //draftThread = new Thread(new Draft());
-        //draftThread.start();
+        draftThread = new Thread(new Draft());
+        draftThread.start();
 		super.onResume();
 	}
 	
 	@Override
 	protected void onPause() {
-		//running = false;
+		running = false;
 		super.onPause();
 	}
 	
 	@Override
 	protected void onDestroy() {
 		try {
-			System.out.println("System.exit");
 			saveDraft();
 			FileOutputStream outStream = this.openFileOutput("database.xml", Context.MODE_PRIVATE);
 			OutputStreamWriter writer = new OutputStreamWriter(outStream, "UTF-8");
 			Notes.writeXML(writer);
+			running = false;
+			draftThread = null;
+Notes.print();
 		} catch (Exception e) { e.printStackTrace(); }
 		super.onDestroy();
 	}
@@ -440,21 +443,20 @@ public class EditNote extends Activity {
 			dialog.dismiss();
 		}
 	}
-	/*
+	
 	private class Draft implements Runnable {
-		private int timer = 5;
+		private int timer = 36;
 		@Override
 		public void run() {
 			while (running) {
 				if (timer <= 0 && changed()) {
 					saveDraft();
-					timer = 5;
-					System.out.println(Notes.getDraft());
+					timer = 36;
+Notes.print();
 				}
 				timer--;
 				if (changed()) 
 					saved = false;
-				System.out.println(timer);
 				try {
 					Thread.sleep(5000);
 				} catch (Exception e) {}
@@ -467,5 +469,5 @@ public class EditNote extends Activity {
 		}
 		
 	}
-	*/
+	
 }

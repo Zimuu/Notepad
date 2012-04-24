@@ -182,4 +182,13 @@ public class Notes {
 				it.remove();
 		}
 	}
+	
+	public static void print() {
+		for (Note note : notes) {
+			System.out.println(note);
+		}
+		if (draft == null) System.out.println("no draft");
+		else System.out.println("draft: " + draft);
+		System.out.println("------------");
+	}
 }

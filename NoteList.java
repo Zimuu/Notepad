@@ -43,11 +43,11 @@ public class NoteList extends ListActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {    	
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.notelist);
-		
+		setContentView(R.layout.notelist);		
 		init();
 		updateList();
 		registerForContextMenu(getListView());
+Notes.print();
 	}
 	
 	private void init() {
@@ -119,6 +119,7 @@ public class NoteList extends ListActivity {
 				})
 				.setNegativeButton(R.string.close, new CloseOperation())
 				.create().show();
+Notes.print();
 				break;
 		}
 	    return super.onOptionsItemSelected(item);
@@ -130,6 +131,7 @@ public class NoteList extends ListActivity {
 		switch(item.getItemId()) {
 			case DELETENOTE:
 				Notes.delete(info.position);
+Notes.print();
 				break;
 			case EDITNOTE:
 				Intent i = new Intent(this, EditNote.class);
@@ -190,18 +192,20 @@ public class NoteList extends ListActivity {
 	
 	@Override
 	protected void onPause() {
+		write();
 		super.onPause();
 	}
 	
 	@Override
 	protected void onStop() {
+		write();
 		super.onStop();
 	}
 	 
 	@Override
 	protected void onDestroy()  {
-		 write();
-		 super.onDestroy();
+		write();
+		super.onDestroy();
 	}
 	 
 	private void write() {
@@ -210,11 +214,12 @@ public class NoteList extends ListActivity {
 			outStream = this.openFileOutput("database.xml", Context.MODE_WORLD_WRITEABLE);
 			OutputStreamWriter writer = new OutputStreamWriter(outStream, "UTF-8");
 			Notes.writeXML(writer);
+			Notes.print();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
+		}
 	}
-	 }
 	    
  }
