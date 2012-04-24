@@ -17,11 +17,11 @@ public class Notes {
 	private static Note draft;
 	private static Set<Note> alarms = new TreeSet<Note>();
 	
-	public static Note getNote(int id) {
-		for (Note note : notes) {
-			if (note.getId() == id)
-				return note;
-		}
+	public static Note getNote(int position) {
+		Iterator<Note> it = notes.iterator();
+		for (int i = 0; it.hasNext(); i++)
+			if (i == position) return it.next();
+			else it.next();
 		return null;
 	}
 	

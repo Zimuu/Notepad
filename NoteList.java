@@ -1,15 +1,22 @@
 package kth.proj.notepad;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import android.app.AlertDialog;
 import android.app.ListActivity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,8 +35,8 @@ public class NoteList extends ListActivity {
 	public static final String ID = "ID";
 	
     private static final int DELETEALL = 2;
-    private static final int DELETENOTE = 4;
-    private static final int EDITNOTE = 3;
+    private static final int DELETENOTE = 1;
+    private static final int EDITNOTE = 0;
 
 	
     
@@ -40,6 +47,7 @@ public class NoteList extends ListActivity {
 		
 		init();
 		updateList();
+		registerForContextMenu(getListView());
 	}
 	
 	private void init() {
@@ -83,6 +91,15 @@ public class NoteList extends ListActivity {
 	}
         
 	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v,
+			ContextMenuInfo menuInfo) {
+		menu.add(0, EDITNOTE, 0, R.string.edit_note);
+		menu.add(0, DELETENOTE, 0, R.string.deletenote);
+		super.onCreateContextMenu(menu, v, menuInfo);
+		menu.setHeaderTitle(R.string.options);
+	}
+
+	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case ADDNOTE + 2:
@@ -112,14 +129,14 @@ public class NoteList extends ListActivity {
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
 		switch(item.getItemId()) {
 			case DELETENOTE:
-				Notes.delete(info.position); 
-				return true;
+				Notes.delete(info.position);
+				break;
 			case EDITNOTE:
 				Intent i = new Intent(this, EditNote.class);
 				i.putExtra(OPERATION, info.position);
 				startActivityForResult(i, EDITNOTE);
 				updateList();
-				return true;
+				break;
 		}
 		updateList();
 		return super.onContextItemSelected(item);
@@ -154,33 +171,50 @@ public class NoteList extends ListActivity {
 		}
 	}
 
-	 @Override
-	 protected void onStart() {
-		 super.onStart();
-	 }
+	@Override
+	protected void onStart() {
+		super.onStart();
+	}
 	
-	 @Override
-	 protected void onRestart() {
-		 super.onRestart();
-	 }
+	@Override
+	protected void onRestart() {
+		updateList();
+		super.onRestart();
+	}
 	
-	 @Override
-	 protected void onResume() {
-		 super.onResume();
-	 }
+	@Override
+	protected void onResume() {
+		updateList();
+		super.onResume();
+	}
 	
-	 @Override
-	 protected void onPause() {
-		 super.onPause();
-	 }
+	@Override
+	protected void onPause() {
+		super.onPause();
+	}
 	
-	 @Override
-	 protected void onStop() {
-		 super.onStop();
-	 }
-	 @Override
-	 protected void onDestroy()  {
+	@Override
+	protected void onStop() {
+		super.onStop();
+	}
+	 
+	@Override
+	protected void onDestroy()  {
+		 write();
 		 super.onDestroy();
+	}
+	 
+	private void write() {
+		FileOutputStream outStream;
+		try {
+			outStream = this.openFileOutput("database.xml", Context.MODE_WORLD_WRITEABLE);
+			OutputStreamWriter writer = new OutputStreamWriter(outStream, "UTF-8");
+			Notes.writeXML(writer);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+	}
 	 }
 	    
  }

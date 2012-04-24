@@ -13,11 +13,12 @@
     <string name="addnote">Add note</string>
     <string name="deleteall">Delete all notes</string>
     <string name="empty">No Notes</string>
-    <string name="menu_delete">Delete Note</string>
+    <string name="deletenote">Delete Note</string>
     <string name="body">Body</string>
     <string name="edit_note">Edit Note</string>
     <string name="open">Open</string>
     <string name="clear">Clear</string>
+    <string name="options">Options</string>
     
     <!-- Strings for EditNote class -->
     <string name="editnote">Edit Note</string>
